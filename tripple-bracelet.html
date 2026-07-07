@@ -1,0 +1,844 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>Verified By: Nepal Rudraksha Lab • AstroVagmi</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,600&family=IM+Fell+English:ital@0;1&family=Jost:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <style>
+        :root {
+            --bg-main: #FDF9F2;
+            --bg-secondary: #F4EFE6;
+            --bg-card: #FFFFFF;
+            --text-primary: #2C2418;
+            --text-secondary: #7A6A53;
+            --gold: #C8A24C;
+            --gold-lt: #E8C06A;
+            --gold-pale: #F5E6C3;
+            --gold-sheen: #FBF5E8;
+            --amber: #D99938;
+            --border: #E8DFD0;
+            --border-gold: rgba(200, 162, 76, 0.4);
+        }
+
+        *,
+        *::before,
+        *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background: var(--bg-secondary);
+            background-image:
+                radial-gradient(ellipse 70% 50% at 50% 0%, rgba(200, 162, 76, 0.08) 0%, transparent 70%),
+                url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%23C8A24C' fill-opacity='0.05'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/svg%3E");
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 2.5rem 1.2rem;
+            font-family: 'Jost', sans-serif;
+            color: var(--text-primary);
+        }
+
+        .frame {
+            max-width: 980px;
+            width: 100%;
+            animation: fadeUp 0.65s ease both;
+        }
+        @keyframes fadeUp {
+            from {
+                opacity: 0;
+                transform: translateY(18px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .frame-inner {
+            background: var(--bg-main);
+            border: 1.5px solid var(--border-gold);
+            box-shadow:
+                0 0 0 5px var(--bg-main),
+                0 0 0 7px rgba(200, 162, 76, 0.18),
+                0 28px 64px rgba(44, 36, 24, 0.12),
+                inset 0 0 40px rgba(200, 162, 76, 0.03);
+            overflow: hidden;
+            position: relative;
+        }
+
+        .frame-inner::before,
+        .frame-inner::after {
+            content: "";
+            position: absolute;
+            width: 52px;
+            height: 52px;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 52 52'%3E%3Cpath d='M3 49 L3 3 L49 3' stroke='%23C8A24C' stroke-width='2' fill='none' stroke-linecap='round'/%3E%3Cpath d='M3 18 Q3 3 18 3' stroke='%23D99938' stroke-width='1.2' fill='none'/%3E%3Ccircle cx='3' cy='3' r='2.5' fill='%23C8A24C'/%3E%3C/svg%3E");
+            background-size: contain;
+            background-repeat: no-repeat;
+            z-index: 5;
+            pointer-events: none;
+        }
+        .frame-inner::before {
+            top: -1px;
+            left: -1px;
+        }
+        .frame-inner::after {
+            top: -1px;
+            right: -1px;
+            transform: rotate(90deg);
+        }
+        .frame-bottom::before,
+        .frame-bottom::after {
+            content: "";
+            position: absolute;
+            width: 52px;
+            height: 52px;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 52 52'%3E%3Cpath d='M3 49 L3 3 L49 3' stroke='%23C8A24C' stroke-width='2' fill='none' stroke-linecap='round'/%3E%3Cpath d='M3 18 Q3 3 18 3' stroke='%23D99938' stroke-width='1.2' fill='none'/%3E%3Ccircle cx='3' cy='3' r='2.5' fill='%23C8A24C'/%3E%3C/svg%3E");
+            background-size: contain;
+            background-repeat: no-repeat;
+            z-index: 5;
+            pointer-events: none;
+        }
+        .frame-bottom::before {
+            bottom: -1px;
+            left: -1px;
+            transform: rotate(270deg);
+        }
+        .frame-bottom::after {
+            bottom: -1px;
+            right: -1px;
+            transform: rotate(180deg);
+        }
+
+        .cert-header {
+            background: var(--bg-main);
+            border-bottom: 1px solid var(--border);
+            padding: 1.8rem 2rem 1.4rem;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+        .cert-header::before {
+            content: "";
+            position: absolute;
+            inset: 0;
+            background-image:
+                linear-gradient(45deg, rgba(200, 162, 76, 0.05) 25%, transparent 25%),
+                linear-gradient(-45deg, rgba(200, 162, 76, 0.05) 25%, transparent 25%);
+            background-size: 20px 20px;
+            pointer-events: none;
+        }
+
+        .gold-rule {
+            height: 1px;
+            background: linear-gradient(90deg, transparent, var(--gold), var(--gold-lt), var(--gold), transparent);
+            opacity: 0.5;
+            margin: 0.75rem 0;
+        }
+
+        .brand-chip {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.45rem;
+            background: var(--gold-sheen);
+            border: 1px solid var(--border-gold);
+            color: var(--text-secondary);
+            font-size: 0.62rem;
+            font-weight: 600;
+            letter-spacing: 0.22em;
+            text-transform: uppercase;
+            padding: 0.28rem 1rem;
+            margin-bottom: 1rem;
+        }
+        .brand-chip i {
+            color: var(--amber);
+        }
+
+        .logo-lockup {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 1.2rem;
+            margin-bottom: 0.25rem;
+        }
+        .logo-lockup img {
+            height: 52px;
+            width: auto;
+            filter: sepia(1) saturate(1.8) hue-rotate(5deg) brightness(0.6);
+        }
+        .brand-name {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 2.6rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            letter-spacing: 0.03em;
+            line-height: 1;
+        }
+        .brand-tagline {
+            font-size: 0.6rem;
+            letter-spacing: 0.2em;
+            text-transform: uppercase;
+            color: var(--text-secondary);
+            font-weight: 400;
+            font-family: 'Jost', sans-serif;
+            margin-top: 2px;
+        }
+
+        .cert-title-badge {
+            margin-top: 0.8rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: var(--gold-sheen);
+            border: 1px solid var(--border-gold);
+            color: var(--text-primary);
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 1rem;
+            font-weight: 600;
+            font-style: italic;
+            padding: 0.38rem 1.4rem;
+            letter-spacing: 0.02em;
+        }
+        .cert-title-badge i {
+            color: var(--amber);
+            font-style: normal;
+            font-size: 0.85rem;
+        }
+
+        .cert-body {
+            padding: 1.8rem 2rem;
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+            background: var(--bg-main);
+        }
+
+        .section-label {
+            font-family: 'Jost', sans-serif;
+            font-size: 0.6rem;
+            font-weight: 600;
+            letter-spacing: 0.22em;
+            text-transform: uppercase;
+            color: var(--amber);
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+            margin-bottom: 0.8rem;
+        }
+        .section-label i {
+            font-size: 0.7rem;
+        }
+        .section-label::after {
+            content: "";
+            flex: 1;
+            height: 1px;
+            background: linear-gradient(90deg, var(--border-gold), transparent);
+        }
+
+        .image-gallery {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.2rem;
+        }
+
+        .image-card {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            padding: 0.7rem;
+            position: relative;
+            transition: transform 0.22s ease, box-shadow 0.22s ease;
+        }
+        .image-card::before {
+            content: "";
+            position: absolute;
+            inset: 4px;
+            border: 1px solid rgba(200, 162, 76, 0.15);
+            pointer-events: none;
+        }
+        .image-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 24px rgba(44, 36, 24, 0.09);
+        }
+        .image-card img {
+            width: 100%;
+            height: 290px;
+            object-fit: cover;
+            display: block;
+            background: var(--bg-secondary);
+        }
+        .image-label {
+            text-align: center;
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--amber);
+            margin-top: 0.55rem;
+            letter-spacing: 0.03em;
+        }
+        .image-label span {
+            color: var(--text-secondary);
+            font-weight: 400;
+            font-style: italic;
+        }
+
+        .details-panel {
+            border: 1px solid var(--border);
+            background: var(--gold-sheen);
+            padding: 1.3rem 1.5rem;
+            position: relative;
+        }
+        .details-panel::before {
+            content: "";
+            position: absolute;
+            inset: 5px;
+            border: 1px solid rgba(200, 162, 76, 0.12);
+            pointer-events: none;
+        }
+        .details-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+            gap: 1.1rem 1.8rem;
+        }
+        .detail-label {
+            font-size: 0.58rem;
+            text-transform: uppercase;
+            letter-spacing: 0.18em;
+            font-weight: 600;
+            color: var(--text-secondary);
+            font-family: 'Jost', sans-serif;
+            margin-bottom: 0.22rem;
+            display: flex;
+            align-items: center;
+            gap: 0.32rem;
+        }
+        .detail-label i {
+            color: var(--amber);
+            font-size: 0.65rem;
+        }
+        .detail-value {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            line-height: 1.2;
+        }
+        .id-pill {
+            display: inline-block;
+            background: var(--text-primary);
+            color: var(--gold-pale);
+            font-family: 'Jost', monospace;
+            font-size: 0.8rem;
+            font-weight: 600;
+            letter-spacing: 0.06em;
+            padding: 0.18rem 0.8rem;
+        }
+
+        .obs-panel {
+            border-left: 3.5px solid var(--amber);
+            background: var(--bg-secondary);
+            border-top: 1px solid var(--border);
+            border-right: 1px solid var(--border);
+            border-bottom: 1px solid var(--border);
+            padding: 1.15rem 1.4rem;
+        }
+        .obs-text {
+            font-family: 'IM Fell English', serif;
+            font-size: 0.94rem;
+            line-height: 1.65;
+            color: var(--text-secondary);
+            margin-bottom: 0.7rem;
+        }
+        .obs-verdict {
+            display: flex;
+            align-items: center;
+            gap: 0.55rem;
+            font-family: 'Jost', sans-serif;
+            font-weight: 600;
+            font-size: 0.82rem;
+            color: #2d6a1f;
+            background: rgba(45, 106, 31, 0.07);
+            border: 1px solid rgba(45, 106, 31, 0.18);
+            padding: 0.5rem 1rem;
+        }
+        .obs-verdict i {
+            font-size: 0.95rem;
+            color: #3a8c24;
+        }
+
+        .guarantee {
+            background: var(--text-primary);
+            color: var(--gold-pale);
+            padding: 0.85rem 1.4rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            font-family: 'Jost', sans-serif;
+            font-size: 0.82rem;
+            font-weight: 400;
+        }
+        .guarantee i {
+            color: var(--gold-lt);
+            font-size: 1.05rem;
+            flex-shrink: 0;
+        }
+        .guarantee strong {
+            color: var(--gold-lt);
+            font-weight: 700;
+        }
+
+        .cert-footer {
+            background: var(--bg-secondary);
+            border-top: 1px solid var(--border);
+            padding: 1rem 2rem;
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            justify-content: space-between;
+            gap: 0.6rem;
+        }
+        .footer-brand {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 0.95rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            display: flex;
+            align-items: center;
+            gap: 0.45rem;
+        }
+        .footer-brand i {
+            color: var(--amber);
+            font-size: 0.8rem;
+        }
+        .footer-contacts {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.85rem;
+            justify-content: center;
+        }
+        .footer-contacts a,
+        .footer-contacts span {
+            color: var(--text-secondary);
+            font-size: 0.7rem;
+            font-family: 'Jost', sans-serif;
+            display: flex;
+            align-items: center;
+            gap: 0.3rem;
+            text-decoration: none;
+            transition: color 0.2s;
+        }
+        .footer-contacts a:hover {
+            color: var(--amber);
+        }
+        .footer-contacts i {
+            color: var(--amber);
+            font-size: 0.65rem;
+        }
+        .footer-copy {
+            width: 100%;
+            text-align: center;
+            font-size: 0.6rem;
+            color: var(--text-secondary);
+            opacity: 0.6;
+            letter-spacing: 0.1em;
+            font-family: 'Jost', sans-serif;
+            text-transform: uppercase;
+            margin-top: 0.2rem;
+        }
+
+        /* Bracelet image card */
+        .bracelet-card {
+            max-width: 500px;
+            width: 100%;
+            margin: 0 auto;
+        }
+        .bracelet-card img {
+            height: auto;
+            width: 100%;
+            object-fit: contain;
+        }
+
+        .bead-divider {
+            height: 1px;
+            background: linear-gradient(90deg, transparent, rgba(200, 162, 76, 0.3), rgba(200, 162, 76, 0.15), transparent);
+            margin: 0.4rem 0;
+            opacity: 0.7;
+        }
+
+        @media (max-width: 640px) {
+            .cert-body {
+                padding: 1.2rem;
+                gap: 1.2rem;
+            }
+            .image-gallery {
+                grid-template-columns: 1fr 1fr;
+                gap: 0.8rem;
+            }
+            .image-card img {
+                height: 190px;
+            }
+            .brand-name {
+                font-size: 2rem;
+            }
+            .logo-lockup img {
+                height: 40px;
+            }
+            .cert-footer {
+                padding: 0.9rem 1.2rem;
+            }
+            .bracelet-card {
+                max-width: 100%;
+            }
+        }
+        @media (max-width: 400px) {
+            .image-gallery {
+                grid-template-columns: 1fr 1fr;
+                gap: 0.5rem;
+            }
+            .image-card img {
+                height: 150px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="frame">
+        <div class="frame-inner frame-bottom">
+
+            <!-- HEADER -->
+            <header class="cert-header">
+                <div class="brand-chip">
+                    <i class="fas fa-certificate"></i>
+                    Official Authenticity Certificate
+                </div>
+                <div class="gold-rule"></div>
+                <div class="logo-lockup">
+                    <img src="logo.png" alt="AstroVagmi Logo">
+                </div>
+                <div class="brand-tagline" style="text-align:center;letter-spacing:0.22em;font-size:0.6rem;color:#7A6A53;font-family:'Jost',sans-serif;margin-top:0.2rem;">
+                    Vedic Wisdom &nbsp;·&nbsp; Sacred Rituals &nbsp;·&nbsp; Genuine Rudraksha
+                </div>
+                <div class="gold-rule"></div>
+                <div class="cert-title-badge">
+                    <i class="fas fa-scroll"></i>
+                    Verified By: Nepal Rudraksha Lab
+                </div>
+            </header>
+
+            <!-- BODY -->
+            <div class="cert-body">
+
+                <!-- ═══════════ FULL PRODUCT BRACELET ═══════════ -->
+                <div>
+                    <div class="section-label"><i class="fas fa-gem"></i> Product Overview</div>
+                    <div class="image-card bracelet-card">
+                        <img id="bracelet-img" src="bracelet.jpg" alt="4+4+12 Mukhi Bracelet"
+                            onerror="this.onerror=null;this.src='data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22600%22 height=%22290%22%3E%3Crect width=%22600%22 height=%22290%22 fill=%22%23F4EFE6%22/%3E%3Ctext x=%2250%25%22 y=%2240%25%22 font-size=%2234%22 fill=%22%23C8A24C%22 text-anchor=%22middle%22 dy=%22.3em%22%3E4%2B4%2B12 Mukhi%3C/text%3E%3Ctext x=%2250%25%22 y=%2270%25%22 font-size=%2222%22 fill=%22%237A6A53%22 text-anchor=%22middle%22%3EBracelet%3C/text%3E%3C/svg%3E';">
+                        <div class="image-label" id="bracelet-label">4+4+12 Mukhi Bracelet &nbsp;<span>· Complete Assembly ·</span></div>
+                    </div>
+                </div>
+
+                <div class="bead-divider"></div>
+
+                <!-- ═══════════ BEAD 1 ═══════════ -->
+                <div>
+                    <div class="section-label"><i class="fas fa-eye"></i> Bead I · Photographic Evidence</div>
+                    <div class="image-gallery">
+                        <div class="image-card">
+                            <img id="front-img-1" src="12-02-Front.jpg" alt="Rudraksha Bead 1 Front View"
+                            onerror="this.onerror=null;this.src='data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22600%22 height=%22290%22%3E%3Crect width=%22600%22 height=%22290%22 fill=%22%23F4EFE6%22/%3E%3Ctext x=%2250%25%22 y=%2242%25%22 font-size=%2248%22 fill=%22%23C8A24C%22 text-anchor=%22middle%22 dy=%22.3em%22%3Eॐ%3C/text%3E%3Ctext x=%2250%25%22 y=%2272%25%22 font-size=%2213%22 fill=%22%237A6A53%22 text-anchor=%22middle%22%3EBead 1 · Front%3C/text%3E%3C/svg%3E';">
+                            <div class="image-label" id="front-label-1">Front View &nbsp;<span>· 12 Mukhi ·</span>&nbsp; Natural Surface</div>
+                        </div>
+                        <div class="image-card">
+                            <img id="back-img-1" src="12-02-Back.jpg" alt="Rudraksha Bead 1 Back View"
+                            onerror="this.onerror=null;this.src='data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22600%22 height=%22290%22%3E%3Crect width=%22600%22 height=%22290%22 fill=%22%23F4EFE6%22/%3E%3Ctext x=%2250%25%22 y=%2242%25%22 font-size=%2248%22 fill=%22%23C8A24C%22 text-anchor=%22middle%22 dy=%22.3em%22%3Eॐ%3C/text%3E%3Ctext x=%2250%25%22 y=%2272%25%22 font-size=%2213%22 fill=%22%237A6A53%22 text-anchor=%22middle%22%3EBead 1 · Back%3C/text%3E%3C/svg%3E';">
+                            <div class="image-label" id="back-label-1">Back View &nbsp;<span>· Natural Lines ·</span>&nbsp; Unaltered</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div>
+                    <div class="section-label"><i class="fas fa-list"></i> Bead I · Specifications</div>
+                    <div class="details-panel">
+                        <div class="details-grid">
+                            <div>
+                                <div class="detail-label"><i class="fas fa-tag"></i> Product No.</div>
+                                <div class="detail-value"><span class="id-pill" id="product-no-1">026-N12-002</span></div>
+                            </div>
+                            <div>
+                                <div class="detail-label"><i class="fas fa-ruler-combined"></i> Dimensions (mm)</div>
+                                <div class="detail-value" id="dimensions-value-1">27.3 × 22.4 × 17.1</div>
+                            </div>
+                            <div>
+                                <div class="detail-label"><i class="fas fa-weight-hanging"></i> Weight</div>
+                                <div class="detail-value" id="weight-value-1">3.87 g</div>
+                            </div>
+                            <div>
+                                <div class="detail-label"><i class="fas fa-star-of-david"></i> Mukhi Count</div>
+                                <div class="detail-value" id="mukhi-value-1">12 Mukhi</div>
+                            </div>
+                            <div>
+                                <div class="detail-label"><i class="fas fa-shapes"></i> Shape</div>
+                                <div class="detail-value" id="shape-value-1">Oval</div>
+                            </div>
+                            <div>
+                                <div class="detail-label"><i class="fas fa-map-marker-alt"></i> Origin</div>
+                                <div class="detail-value" id="origin-value-1">Nepal</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bead-divider"></div>
+
+                <!-- ═══════════ BEAD 2 ═══════════ -->
+                <div>
+                    <div class="section-label"><i class="fas fa-eye"></i> Bead II · Photographic Evidence</div>
+                    <div class="image-gallery">
+                        <div class="image-card">
+                            <img id="front-img-2" src="05-14-Front.jpg" alt="Rudraksha Bead 2 Front View"
+                            onerror="this.onerror=null;this.src='data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22600%22 height=%22290%22%3E%3Crect width=%22600%22 height=%22290%22 fill=%22%23F4EFE6%22/%3E%3Ctext x=%2250%25%22 y=%2242%25%22 font-size=%2248%22 fill=%22%23C8A24C%22 text-anchor=%22middle%22 dy=%22.3em%22%3Eॐ%3C/text%3E%3Ctext x=%2250%25%22 y=%2272%25%22 font-size=%2213%22 fill=%22%237A6A53%22 text-anchor=%22middle%22%3EBead 2 · Front%3C/text%3E%3C/svg%3E';">
+                            <div class="image-label" id="front-label-2">Front View &nbsp;<span>· 5 Mukhi ·</span>&nbsp; Natural Surface</div>
+                        </div>
+                        <div class="image-card">
+                            <img id="back-img-2" src="05-14-Back.jpg" alt="Rudraksha Bead 2 Back View"
+                            onerror="this.onerror=null;this.src='data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22600%22 height=%22290%22%3E%3Crect width=%22600%22 height=%22290%22 fill=%22%23F4EFE6%22/%3E%3Ctext x=%2250%25%22 y=%2242%25%22 font-size=%2248%22 fill=%22%23C8A24C%22 text-anchor=%22middle%22 dy=%22.3em%22%3Eॐ%3C/text%3E%3Ctext x=%2250%25%22 y=%2272%25%22 font-size=%2213%22 fill=%22%237A6A53%22 text-anchor=%22middle%22%3EBead 2 · Back%3C/text%3E%3C/svg%3E';">
+                            <div class="image-label" id="back-label-2">Back View &nbsp;<span>· Natural Lines ·</span>&nbsp; Unaltered</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div>
+                    <div class="section-label"><i class="fas fa-list"></i> Bead II · Specifications</div>
+                    <div class="details-panel">
+                        <div class="details-grid">
+                            <div>
+                                <div class="detail-label"><i class="fas fa-tag"></i> Product No.</div>
+                                <div class="detail-value"><span class="id-pill" id="product-no-2">026-N05-014</span></div>
+                            </div>
+                            <div>
+                                <div class="detail-label"><i class="fas fa-ruler-combined"></i> Dimensions (mm)</div>
+                                <div class="detail-value" id="dimensions-value-2">24.1 × 20.8 × 16.3</div>
+                            </div>
+                            <div>
+                                <div class="detail-label"><i class="fas fa-weight-hanging"></i> Weight</div>
+                                <div class="detail-value" id="weight-value-2">3.12 g</div>
+                            </div>
+                            <div>
+                                <div class="detail-label"><i class="fas fa-star-of-david"></i> Mukhi Count</div>
+                                <div class="detail-value" id="mukhi-value-2">5 Mukhi</div>
+                            </div>
+                            <div>
+                                <div class="detail-label"><i class="fas fa-shapes"></i> Shape</div>
+                                <div class="detail-value" id="shape-value-2">Round</div>
+                            </div>
+                            <div>
+                                <div class="detail-label"><i class="fas fa-map-marker-alt"></i> Origin</div>
+                                <div class="detail-value" id="origin-value-2">Nepal</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bead-divider"></div>
+
+                <!-- ═══════════ BEAD 3 ═══════════ -->
+                <div>
+                    <div class="section-label"><i class="fas fa-eye"></i> Bead III · Photographic Evidence</div>
+                    <div class="image-gallery">
+                        <div class="image-card">
+                            <img id="front-img-3" src="07-08-Front.jpg" alt="Rudraksha Bead 3 Front View"
+                            onerror="this.onerror=null;this.src='data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22600%22 height=%22290%22%3E%3Crect width=%22600%22 height=%22290%22 fill=%22%23F4EFE6%22/%3E%3Ctext x=%2250%25%22 y=%2242%25%22 font-size=%2248%22 fill=%22%23C8A24C%22 text-anchor=%22middle%22 dy=%22.3em%22%3Eॐ%3C/text%3E%3Ctext x=%2250%25%22 y=%2272%25%22 font-size=%2213%22 fill=%22%237A6A53%22 text-anchor=%22middle%22%3EBead 3 · Front%3C/text%3E%3C/svg%3E';">
+                            <div class="image-label" id="front-label-3">Front View &nbsp;<span>· 7 Mukhi ·</span>&nbsp; Natural Surface</div>
+                        </div>
+                        <div class="image-card">
+                            <img id="back-img-3" src="07-08-Back.jpg" alt="Rudraksha Bead 3 Back View"
+                            onerror="this.onerror=null;this.src='data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22600%22 height=%22290%22%3E%3Crect width=%22600%22 height=%22290%22 fill=%22%23F4EFE6%22/%3E%3Ctext x=%2250%25%22 y=%2242%25%22 font-size=%2248%22 fill=%22%23C8A24C%22 text-anchor=%22middle%22 dy=%22.3em%22%3Eॐ%3C/text%3E%3Ctext x=%2250%25%22 y=%2272%25%22 font-size=%2213%22 fill=%22%237A6A53%22 text-anchor=%22middle%22%3EBead 3 · Back%3C/text%3E%3C/svg%3E';">
+                            <div class="image-label" id="back-label-3">Back View &nbsp;<span>· Natural Lines ·</span>&nbsp; Unaltered</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div>
+                    <div class="section-label"><i class="fas fa-list"></i> Bead III · Specifications</div>
+                    <div class="details-panel">
+                        <div class="details-grid">
+                            <div>
+                                <div class="detail-label"><i class="fas fa-tag"></i> Product No.</div>
+                                <div class="detail-value"><span class="id-pill" id="product-no-3">026-N07-008</span></div>
+                            </div>
+                            <div>
+                                <div class="detail-label"><i class="fas fa-ruler-combined"></i> Dimensions (mm)</div>
+                                <div class="detail-value" id="dimensions-value-3">25.6 × 21.3 × 16.8</div>
+                            </div>
+                            <div>
+                                <div class="detail-label"><i class="fas fa-weight-hanging"></i> Weight</div>
+                                <div class="detail-value" id="weight-value-3">3.45 g</div>
+                            </div>
+                            <div>
+                                <div class="detail-label"><i class="fas fa-star-of-david"></i> Mukhi Count</div>
+                                <div class="detail-value" id="mukhi-value-3">7 Mukhi</div>
+                            </div>
+                            <div>
+                                <div class="detail-label"><i class="fas fa-shapes"></i> Shape</div>
+                                <div class="detail-value" id="shape-value-3">Oval</div>
+                            </div>
+                            <div>
+                                <div class="detail-label"><i class="fas fa-map-marker-alt"></i> Origin</div>
+                                <div class="detail-value" id="origin-value-3">Nepal</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bead-divider"></div>
+
+                <!-- ═══════════ UNIFIED OBSERVATION ═══════════ -->
+                <div>
+                    <div class="section-label"><i class="fas fa-microscope"></i> Gemological Observation — All Three Beads</div>
+                    <div class="obs-panel">
+                        <p class="obs-text" id="obs-paragraph">
+                            Under high-magnification analysis, all three beads exhibit their respective naturally formed mukhi lines — 12, 5, and 7 distinct lines respectively — with no evidence of artificial scoring or chemical treatment across any specimen. Surface texture and internal structure of each bead are consistent with authentic <em>Elaeocarpus ganitrus</em> origin. No synthetic resin, pigment dyes, or tampering detected in any of the three beads.
+                        </p>
+                        <div class="obs-verdict" id="obs-verdict">
+                            <i class="fas fa-check-circle"></i>
+                            Certified Genuine — All authenticity protocols passed. Three Rudraksha beads (12 Mukhi, 5 Mukhi, and 7 Mukhi) confirmed by gemological analysis.
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Guarantee -->
+                <div class="guarantee">
+                    <i class="fas fa-hand-holding-heart"></i>
+                    <span>
+                        <strong>Money-Back Guarantee:</strong>
+                        If any of these Rudraksha beads is proven artificial, duplicate, or non-genuine, full refund eligibility is granted upon verification. AstroVagmi stands behind every certified bead.
+                    </span>
+                </div>
+
+            </div><!-- /cert-body -->
+
+            <!-- FOOTER -->
+            <footer class="cert-footer">
+                <div class="footer-brand">
+                    <i class="fas fa-gem"></i>
+                    AstroVagmi Wellness LLP
+                </div>
+                <div class="footer-contacts">
+                    <span><i class="fas fa-envelope"></i> support@astrovagmi.com</span>
+                    <span><i class="fas fa-phone-alt"></i> +91 80899 08750</span>
+                    <span><i class="fas fa-map-marker-alt"></i> GK Tower -2nd Floor, Chakkaraparambu Road, Ernakulam, Kerala 682032</span>
+                    <a href="https://astrovagmi.com" target="_blank"><i class="fas fa-globe"></i> astrovagmi.com</a>
+                </div>
+                <div class="footer-copy">
+                    &copy; 2026 AstroVagmi Wellness LLP &middot; Rudraksha &middot; Vedic Astrology &middot; Gemstones &middot; Puja &amp; Homa
+                </div>
+            </footer>
+
+        </div><!-- /frame-inner -->
+    </div><!-- /frame -->
+
+    <!-- Dynamic URL parameter script for bracelet image + THREE beads -->
+    <script>
+        (function() {
+            const params = new URLSearchParams(window.location.search);
+            const get = (key, fallback) => params.get(key) || fallback;
+
+            // ── Bracelet image ─────────────────
+            const braceletImg = get('braceletImg', 'bracelet.jpg');
+            const braceletImgEl = document.getElementById('bracelet-img');
+            if (braceletImgEl) {
+                braceletImgEl.src = braceletImg;
+                braceletImgEl.alt = '4+4+12 Mukhi Bracelet';
+            }
+            // update label (keep static unless we also param the label)
+            const braceletLabel = document.getElementById('bracelet-label');
+            if (braceletLabel) {
+                braceletLabel.innerHTML = '4+4+12 Mukhi Bracelet &nbsp;<span>· Complete Assembly ·</span>';
+            }
+
+            // ── Bead configuration ─────────────────
+            const beadDefaults = [
+                { // Bead 1
+                    mukhi: '12',
+                    productNo: '026-N12-002',
+                    dimensions: '27.3 × 22.4 × 17.1',
+                    weight: '3.87 g',
+                    shape: 'Oval',
+                    origin: 'Nepal',
+                    front: '12-02-Front.jpg',
+                    back: '12-02-Back.jpg'
+                }, { // Bead 2
+                    mukhi: '5',
+                    productNo: '026-N05-014',
+                    dimensions: '24.1 × 20.8 × 16.3',
+                    weight: '3.12 g',
+                    shape: 'Round',
+                    origin: 'Nepal',
+                    front: '05-14-Front.jpg',
+                    back: '05-14-Back.jpg'
+                }, { // Bead 3
+                    mukhi: '7',
+                    productNo: '026-N07-008',
+                    dimensions: '25.6 × 21.3 × 16.8',
+                    weight: '3.45 g',
+                    shape: 'Oval',
+                    origin: 'Nepal',
+                    front: '07-08-Front.jpg',
+                    back: '07-08-Back.jpg'
+                }
+            ];
+
+            const mukhiValues = [];
+
+            for (let i = 0; i < 3; i++) {
+                const n = i + 1;
+                const def = beadDefaults[i];
+
+                const mukhi = get(`mukhi${n}`, def.mukhi);
+                const productNo = get(`productNo${n}`, def.productNo);
+                const dimensions = get(`dimensions${n}`, def.dimensions);
+                const weight = get(`weight${n}`, def.weight);
+                const shape = get(`shape${n}`, def.shape);
+                const origin = get(`origin${n}`, def.origin);
+                const frontImg = get(`front${n}`, def.front);
+                const backImg = get(`back${n}`, def.back);
+
+                mukhiValues.push(mukhi);
+
+                document.getElementById(`product-no-${n}`).textContent = productNo;
+                document.getElementById(`dimensions-value-${n}`).textContent = dimensions;
+                document.getElementById(`weight-value-${n}`).textContent = weight;
+                document.getElementById(`mukhi-value-${n}`).textContent = `${mukhi} Mukhi`;
+                document.getElementById(`shape-value-${n}`).textContent = shape;
+                document.getElementById(`origin-value-${n}`).textContent = origin;
+
+                const frontImgEl = document.getElementById(`front-img-${n}`);
+                frontImgEl.src = frontImg;
+                frontImgEl.alt = `Rudraksha Bead ${n} Front View (${mukhi} Mukhi)`;
+                document.getElementById(`front-label-${n}`).innerHTML =
+                    `Front View &nbsp;<span>· ${mukhi} Mukhi ·</span>&nbsp; Natural Surface`;
+
+                const backImgEl = document.getElementById(`back-img-${n}`);
+                backImgEl.src = backImg;
+                backImgEl.alt = `Rudraksha Bead ${n} Back View (${mukhi} Mukhi)`;
+                document.getElementById(`back-label-${n}`).innerHTML =
+                    `Back View &nbsp;<span>· Natural Lines ·</span>&nbsp; Unaltered`;
+            }
+
+            // Unified observation paragraph
+            document.getElementById('obs-paragraph').innerHTML =
+                `Under high-magnification analysis, all three beads exhibit their respective naturally formed mukhi lines — ${mukhiValues[0]}, ${mukhiValues[1]}, and ${mukhiValues[2]} distinct lines respectively — with no evidence of artificial scoring or chemical treatment across any specimen. Surface texture and internal structure of each bead are consistent with authentic <em>Elaeocarpus ganitrus</em> origin. No synthetic resin, pigment dyes, or tampering detected in any of the three beads.`;
+
+            // Unified verdict
+            document.getElementById('obs-verdict').innerHTML =
+                `<i class="fas fa-check-circle"></i> Certified Genuine — All authenticity protocols passed. Three Rudraksha beads (${mukhiValues[0]} Mukhi, ${mukhiValues[1]} Mukhi, and ${mukhiValues[2]} Mukhi) confirmed by gemological analysis.`;
+        })();
+    </script>
+</body>
+              </html>
