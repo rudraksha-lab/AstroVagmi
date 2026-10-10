@@ -95,7 +95,6 @@
       overflow: hidden;
     }
 
-    /* subtle crosshatch watermark */
     .cert-header::before {
       content: "";
       position: absolute;
@@ -130,7 +129,6 @@
     }
     .brand-chip i { color: var(--amber); }
 
-    /* Logo */
     .logo-lockup {
       display: flex;
       align-items: center;
@@ -141,30 +139,18 @@
     .logo-lockup img {
       height: 52px;
       width: auto;
-      /* invert + tint to match gold palette */
       filter: sepia(1) saturate(1.8) hue-rotate(5deg) brightness(0.6);
     }
-    .brand-wordmark {
-      display: flex;
-      flex-direction: column;
-      align-items: flex-start;
-    }
-    .brand-name {
-      font-family: 'Cormorant Garamond', serif;
-      font-size: 2.6rem;
-      font-weight: 700;
-      color: var(--text-primary);
-      letter-spacing: 0.03em;
-      line-height: 1;
-    }
+
     .brand-tagline {
       font-size: 0.6rem;
-      letter-spacing: 0.2em;
+      letter-spacing: 0.22em;
       text-transform: uppercase;
       color: var(--text-secondary);
       font-weight: 400;
       font-family: 'Jost', sans-serif;
       margin-top: 2px;
+      text-align: center;
     }
 
     .cert-title-badge {
@@ -213,7 +199,7 @@
       background: linear-gradient(90deg, var(--border-gold), transparent);
     }
 
-    /* ── IMAGE GALLERY — always 2 columns ── */
+    /* ── IMAGE GALLERY ── */
     .image-gallery {
       display: grid;
       grid-template-columns: 1fr 1fr;
@@ -324,56 +310,8 @@
       font-size: 0.94rem;
       line-height: 1.65;
       color: var(--text-secondary);
-      margin-bottom: 0.85rem;
-    }
-
-    /* structured findings */
-    .obs-findings {
-      list-style: none;
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-      gap: 0.55rem 1.6rem;
-      margin: 0 0 0.95rem;
-      padding: 0.85rem 0 0;
-      border-top: 1px dashed rgba(200,162,76,0.35);
-    }
-    .obs-findings li {
-      display: flex;
-      gap: 0.5rem;
-      font-family: 'Jost', sans-serif;
-      font-size: 0.78rem;
-      line-height: 1.5;
-      color: var(--text-secondary);
-    }
-    .obs-findings li > i {
-      color: var(--amber);
-      font-size: 0.68rem;
-      margin-top: 0.3rem;
-      flex-shrink: 0;
-    }
-    .obs-findings li strong {
-      color: var(--text-primary);
-      font-weight: 600;
-    }
-
-    /* instrument / method strip */
-    .obs-meta {
-      display: flex;
-      flex-wrap: wrap;
-      align-items: center;
-      gap: 0.4rem 0.9rem;
-      font-family: 'Jost', sans-serif;
-      font-size: 0.62rem;
-      letter-spacing: 0.12em;
-      text-transform: uppercase;
-      color: var(--text-secondary);
-      opacity: 0.85;
-      padding-top: 0.75rem;
       margin-bottom: 0.9rem;
-      border-top: 1px dashed rgba(200,162,76,0.35);
     }
-    .obs-meta i { color: var(--amber); font-size: 0.62rem; }
-
     .obs-verdict {
       display: flex;
       align-items: center;
@@ -461,10 +399,7 @@
       .cert-body { padding: 1.2rem; gap: 1.2rem; }
       .image-gallery { grid-template-columns: 1fr 1fr; gap: 0.8rem; }
       .image-card img { height: 190px; }
-      .brand-name { font-size: 2rem; }
-      .logo-lockup img { height: 40px; }
       .cert-footer { padding: 0.9rem 1.2rem; }
-      .obs-findings { grid-template-columns: 1fr; gap: 0.5rem; }
     }
     @media (max-width: 400px) {
       .image-gallery { grid-template-columns: 1fr 1fr; gap: 0.5rem; }
@@ -486,11 +421,10 @@
         <div class="gold-rule"></div>
 
         <div class="logo-lockup">
-          <!-- Logo replaced with simple png reference -->
           <img src="logo.png" alt="AstroVagmi Logo">
         </div>
 
-        <div class="brand-tagline" style="text-align:center;letter-spacing:0.22em;font-size:0.6rem;color:#7A6A53;font-family:'Jost',sans-serif;margin-top:0.2rem;">
+        <div class="brand-tagline">
           Vedic Wisdom &nbsp;·&nbsp; Sacred Rituals &nbsp;·&nbsp; Certified Gemstones
         </div>
 
@@ -505,7 +439,7 @@
       <!-- BODY -->
       <div class="cert-body">
 
-        <!-- Images — always 2 columns via CSS grid -->
+        <!-- Images -->
         <div>
           <div class="section-label"><i class="fas fa-eye"></i> Photographic Evidence</div>
           <div class="image-gallery">
@@ -585,26 +519,10 @@
         <div>
           <div class="section-label"><i class="fas fa-microscope"></i> Gemological Observation</div>
           <div class="obs-panel">
-
-            <p class="obs-text" id="obs-paragraph">
-              Under high-magnification analysis, the specimen exhibits natural internal characteristics
-              consistent with Natural Corundum. Refractive index (1.762 – 1.770), specific gravity
-              (3.98 – 4.00) and optic character (Doubly Refractive (DR)) readings all fall within accepted
-              parameters for this species. Colour is natural deep violet-blue. No evidence of synthetic
-              origin, glass filling, dyeing, or irradiation treatment detected.
-            </p>
-
-            <ul class="obs-findings" id="obs-findings">
-              <!-- populated dynamically from the specification table -->
-            </ul>
-
-            <div class="obs-meta">
-              <span><i class="fas fa-tools"></i> Instruments: Refractometer · Hydrostatic Balance · Polariscope &amp; Dichroscope · Stereo Microscope 10×–60× · Long-wave UV Lamp · Immersion Cell</span>
-            </div>
-
+            <p class="obs-text" id="obs-paragraph"></p>
             <div class="obs-verdict" id="obs-verdict">
               <i class="fas fa-check-circle"></i>
-              Certified Genuine — All authenticity protocols passed. Natural Corundum confirmed by gemological analysis.
+              <span id="verdict-text"></span>
             </div>
           </div>
         </div>
@@ -647,14 +565,13 @@
     (function() {
       const params = new URLSearchParams(window.location.search);
 
-      // Helper: get parameter or fallback to default
       const get = (key, fallback) => params.get(key) || fallback;
 
       /* ─────────────────────────────────────────────
-         SPECIFICATION TABLE — single source of truth.
+         SPECIFICATION — single source of truth.
          Every value below is URL-overridable, and the
-         observation paragraph + findings + verdict are
-         generated from these same values.
+         observation paragraph + verdict are generated
+         from these same values.
       ───────────────────────────────────────────── */
       const SPEC = {
         productNo  : get('productNo',  '026-CB-002'),
@@ -672,7 +589,6 @@
         backImg    : get('back',       'corundum-02-Back.jpg')
       };
 
-      // Lower-case colour for natural prose inside the paragraph
       const colourLower = SPEC.colour.toLowerCase();
 
       /* ── 1. Populate the specification table ───── */
@@ -706,7 +622,7 @@
       document.getElementById('back-label').innerHTML =
         `Pavilion View &nbsp;<span>· Internal Features ·</span>&nbsp; Unaltered`;
 
-      /* ── 3. Observation paragraph (driven by SPEC) ─ */
+      /* ── 3. Observation paragraph ─────────────── */
       document.getElementById('obs-paragraph').innerHTML =
         `Under high-magnification analysis, the specimen exhibits natural internal characteristics ` +
         `consistent with ${SPEC.species}. Refractive index (${SPEC.ri}), specific gravity (${SPEC.sg}) ` +
@@ -714,60 +630,9 @@
         `species. Colour is natural ${colourLower}. No evidence of synthetic origin, glass filling, ` +
         `dyeing, or irradiation treatment detected.`;
 
-      /* ── 4. Structured findings (driven by SPEC) ── */
-      const findings = [
-        {
-          icon: 'fa-wave-square',
-          title: 'Refractive Index (RI)',
-          body : `Spot reading of ${SPEC.ri} on a calibrated refractometer; birefringence of 0.008 — within the accepted range for ${SPEC.species}.`
-        },
-        {
-          icon: 'fa-balance-scale',
-          title: 'Specific Gravity',
-          body : `Hydrostatic weighing returns ${SPEC.sg} g/cm³, matching the natural ${SPEC.species} range and ruling out glass or synthetic substitutes.`
-        },
-        {
-          icon: 'fa-sun',
-          title: 'Optic Character',
-          body : `${SPEC.optic} — uniaxial negative with a distinct pleochroic response under the dichroscope, consistent with crystalline corundum.`
-        },
-        {
-          icon: 'fa-palette',
-          title: 'Colour &amp; Pleochroism',
-          body : `Natural ${colourLower} body colour; dichroic reaction shows violet-blue to greenish-blue, typical of untreated natural ${SPEC.species}.`
-        },
-        {
-          icon: 'fa-search',
-          title: 'Internal Characteristics',
-          body : `Magnification reveals natural silk (rutile needles), mineral crystals and growth zoning; no curved striae, gas bubbles or flux residue that would indicate synthetic origin.`
-        },
-        {
-          icon: 'fa-shield-alt',
-          title: 'Treatment Examination',
-          body : `No glass filling, dyeing, lattice diffusion or irradiation detected; immersion and UV inspection show no filler residues or colour concentration in fissures.`
-        },
-        {
-          icon: 'fa-database',
-          title: 'Reference Match',
-          body : `Optical and physical profile matched against the Nepal Rudraksha Lab reference archive with a confidence rating of 99.4%.`
-        },
-        {
-          icon: 'fa-hard-hat',
-          title: 'Durability',
-          body : `Mohs hardness 9; no surface abrasions, chips or clarity-enhancing fractures observed. Shape and finish graded as ${SPEC.shape}.`
-        }
-      ];
-
-      document.getElementById('obs-findings').innerHTML = findings.map(f => `
-        <li>
-          <i class="fas ${f.icon}"></i>
-          <span><strong>${f.title}:</strong> ${f.body}</span>
-        </li>`).join('');
-
-      /* ── 5. Verdict line ───────────────────────── */
-      document.getElementById('obs-verdict').innerHTML =
-        `<i class="fas fa-check-circle"></i> Certified Genuine — All authenticity protocols passed. ` +
-        `${SPEC.species} confirmed by gemological analysis.`;
+      /* ── 4. Verdict line ───────────────────────── */
+      document.getElementById('verdict-text').textContent =
+        `Certified Genuine — All authenticity protocols passed. ${SPEC.species} confirmed by gemological analysis.`;
 
     })();
   </script>
