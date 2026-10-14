@@ -446,18 +446,18 @@
             <div class="image-card">
               <img
                 id="front-img"
-                src="corundum-02-Front.jpg"
+                src=""
                 alt="Gemstone Table View"
                 onerror="this.onerror=null;this.src='data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22600%22 height=%22290%22%3E%3Crect width=%22600%22 height=%22290%22 fill=%22%23F4EFE6%22/%3E%3Ctext x=%2250%25%22 y=%2242%25%22 font-size=%2248%22 fill=%22%23C8A24C%22 text-anchor=%22middle%22 dy=%22.3em%22%3E%E2%97%88%3C/text%3E%3Ctext x=%2250%25%22 y=%2272%25%22 font-size=%2213%22 fill=%22%237A6A53%22 text-anchor=%22middle%22%3ETable View%3C/text%3E%3C/svg%3E';">
-              <div class="image-label" id="front-label">Table View &nbsp;<span>· Natural Corundum ·</span>&nbsp; Natural Facets</div>
+              <div class="image-label" id="front-label">Table View</div>
             </div>
             <div class="image-card">
               <img
                 id="back-img"
-                src="corundum-02-Back.jpg"
+                src=""
                 alt="Gemstone Pavilion View"
                 onerror="this.onerror=null;this.src='data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22600%22 height=%22290%22%3E%3Crect width=%22600%22 height=%22290%22 fill=%22%23F4EFE6%22/%3E%3Ctext x=%2250%25%22 y=%2242%25%22 font-size=%2248%22 fill=%22%23C8A24C%22 text-anchor=%22middle%22 dy=%22.3em%22%3E%E2%97%88%3C/text%3E%3Ctext x=%2250%25%22 y=%2272%25%22 font-size=%2213%22 fill=%22%237A6A53%22 text-anchor=%22middle%22%3EPavilion View%3C/text%3E%3C/svg%3E';">
-              <div class="image-label" id="back-label">Pavilion View &nbsp;<span>· Internal Features ·</span>&nbsp; Unaltered</div>
+              <div class="image-label" id="back-label">Pavilion View</div>
             </div>
           </div>
         </div>
@@ -469,47 +469,47 @@
             <div class="details-grid">
               <div>
                 <div class="detail-label"><i class="fas fa-tag"></i> Product No.</div>
-                <div class="detail-value"><span class="id-pill" id="product-no">026-CB-002</span></div>
+                <div class="detail-value"><span class="id-pill" id="product-no">—</span></div>
               </div>
               <div>
                 <div class="detail-label"><i class="fas fa-ruler-combined"></i> Dimensions</div>
-                <div class="detail-value" id="dimensions-value">8.2 × 6.4 × 4.1 mm</div>
+                <div class="detail-value" id="dimensions-value">—</div>
               </div>
               <div>
                 <div class="detail-label"><i class="fas fa-weight-hanging"></i> Weight</div>
-                <div class="detail-value" id="weight-value">1.87 ct</div>
+                <div class="detail-value" id="weight-value">—</div>
               </div>
               <div>
                 <div class="detail-label"><i class="fas fa-gem"></i> Species</div>
-                <div class="detail-value" id="species-value">Natural Corundum</div>
+                <div class="detail-value" id="species-value">—</div>
               </div>
               <div>
                 <div class="detail-label"><i class="fas fa-star-of-david"></i> Variety</div>
-                <div class="detail-value" id="variety-value">Blue Sapphire</div>
+                <div class="detail-value" id="variety-value">—</div>
               </div>
               <div>
                 <div class="detail-label"><i class="fas fa-map-location-dot"></i> Origin</div>
-                <div class="detail-value" id="origin-value">Sri Lanka</div>
+                <div class="detail-value" id="origin-value">—</div>
               </div>
               <div>
                 <div class="detail-label"><i class="fas fa-shapes"></i> Shape / Cut</div>
-                <div class="detail-value" id="shape-value">Oval Mixed Cut</div>
+                <div class="detail-value" id="shape-value">—</div>
               </div>
               <div>
                 <div class="detail-label"><i class="fas fa-wave-square"></i> Refractive Index</div>
-                <div class="detail-value" id="ri-value">1.762 – 1.770</div>
+                <div class="detail-value" id="ri-value">—</div>
               </div>
               <div>
                 <div class="detail-label"><i class="fas fa-balance-scale"></i> Specific Gravity</div>
-                <div class="detail-value" id="sg-value">3.98 – 4.00</div>
+                <div class="detail-value" id="sg-value">—</div>
               </div>
               <div>
                 <div class="detail-label"><i class="fas fa-sun"></i> Optic Character</div>
-                <div class="detail-value" id="optic-value">Doubly Refractive (DR)</div>
+                <div class="detail-value" id="optic-value">—</div>
               </div>
               <div>
                 <div class="detail-label"><i class="fas fa-palette"></i> Colour</div>
-                <div class="detail-value" id="colour-value">Deep Violet-Blue</div>
+                <div class="detail-value" id="colour-value">—</div>
               </div>
             </div>
           </div>
@@ -560,81 +560,181 @@
     </div><!-- /frame-inner -->
   </div><!-- /frame -->
 
-  <!-- Dynamic URL parameter script -->
+  <!-- ═══════════════════════════════════════════════════════
+       DATA LOADER
+       Priority:  URL param  >  JSON file  >  built-in default
+       ─────────────────────────────────────────────────────
+       Short link  :  gems.html?id=026-ER-001
+       JSON files  :  gems/026-ER-001.json      (one per gem)
+                      gems/gems.json            (optional master list)
+       ═══════════════════════════════════════════════════════ -->
   <script>
-    (function() {
-      const params = new URLSearchParams(window.location.search);
+  (async function () {
+    'use strict';
 
-      const get = (key, fallback) => params.get(key) || fallback;
+    /* ── 0. Read URL ─────────────────────────────────────── */
+    const params   = new URLSearchParams(window.location.search);
+    const recordId = (params.get('id') || params.get('productNo') || '').trim();
 
-      /* ─────────────────────────────────────────────
-         SPECIFICATION — single source of truth.
-         Every value below is URL-overridable, and the
-         observation paragraph + verdict are generated
-         from these same values.
-      ───────────────────────────────────────────── */
-      const SPEC = {
-        productNo  : get('productNo',  '026-CB-002'),
-        dimensions : get('dimensions', '8.2 × 6.4 × 4.1 mm'),
-        weight     : get('weight',     '1.87 ct'),
-        species    : get('species',    'Natural Corundum'),
-        variety    : get('variety',    'Blue Sapphire'),
-        origin     : get('origin',     'Sri Lanka'),
-        shape      : get('shape',      'Oval Mixed Cut'),
-        ri         : get('ri',         '1.762 – 1.770'),
-        sg         : get('sg',         '3.98 – 4.00'),
-        optic      : get('optic',      'Doubly Refractive (DR)'),
-        colour     : get('colour',     'Deep Violet-Blue'),
-        frontImg   : get('front',      'corundum-02-Front.jpg'),
-        backImg    : get('back',       'corundum-02-Back.jpg')
-      };
+    /* ── 1. JSON loaders ─────────────────────────────────── */
+    async function fetchJSON(url) {
+      try {
+        const res = await fetch(url, { cache: 'no-cache' });
+        if (!res.ok) return null;
+        return await res.json();
+      } catch (_) { return null; }
+    }
 
-      const colourLower = SPEC.colour.toLowerCase();
+    async function loadRecord(id) {
+      if (!id) return null;
 
-      /* ── 1. Populate the specification table ───── */
-      const setText = (id, val) => {
-        const el = document.getElementById(id);
-        if (el) el.textContent = val;
-      };
+      /* (a) dedicated file:  gems/<id>.json */
+      const one = await fetchJSON('gems/' + encodeURIComponent(id) + '.json');
+      if (one && typeof one === 'object' && !Array.isArray(one)) return one;
 
-      setText('product-no',       SPEC.productNo);
-      setText('dimensions-value', SPEC.dimensions);
-      setText('weight-value',     SPEC.weight);
-      setText('species-value',    SPEC.species);
-      setText('variety-value',    SPEC.variety);
-      setText('origin-value',     SPEC.origin);
-      setText('shape-value',      SPEC.shape);
-      setText('ri-value',         SPEC.ri);
-      setText('sg-value',         SPEC.sg);
-      setText('optic-value',      SPEC.optic);
-      setText('colour-value',     SPEC.colour);
+      /* (b) master file:  gems/gems.json  →  { "<id>": { ... } } */
+      const all = await fetchJSON('gems/gems.json');
+      if (all && typeof all === 'object') {
+        if (all[id] && typeof all[id] === 'object') return all[id];
+        if (all.gems && all.gems[id]) return all.gems[id];
+      }
+      return null;
+    }
 
-      /* ── 2. Images + labels ────────────────────── */
-      const frontImgEl = document.getElementById('front-img');
-      frontImgEl.src = SPEC.frontImg;
-      frontImgEl.alt = `${SPEC.species} — Table View`;
-      document.getElementById('front-label').innerHTML =
-        `Table View &nbsp;<span>· ${SPEC.species} ·</span>&nbsp; Natural Facets`;
+    const json = (await loadRecord(recordId)) || {};
 
-      const backImgEl = document.getElementById('back-img');
-      backImgEl.src = SPEC.backImg;
-      backImgEl.alt = `${SPEC.species} — Pavilion View`;
-      document.getElementById('back-label').innerHTML =
-        `Pavilion View &nbsp;<span>· Internal Features ·</span>&nbsp; Unaltered`;
+    /* ── 2. Merge: URL param  >  JSON  >  default ────────── */
+    const pick = (key, fallback) => {
+      const p = params.get(key);
+      if (p !== null && p.trim() !== '') return p.trim();
+      const j = json[key];
+      if (j !== undefined && j !== null && String(j).trim() !== '') return String(j).trim();
+      return fallback;
+    };
 
-      /* ── 3. Observation paragraph ─────────────── */
-      document.getElementById('obs-paragraph').innerHTML =
-        `Under high-magnification analysis, the specimen exhibits natural internal characteristics ` +
-        `consistent with ${SPEC.species}. Refractive index (${SPEC.ri}), specific gravity (${SPEC.sg}) ` +
-        `and optic character (${SPEC.optic}) readings all fall within accepted parameters for this ` +
-        `species. Colour is natural ${colourLower}. No evidence of synthetic origin, glass filling, ` +
-        `dyeing, or irradiation treatment detected.`;
+    /* optional prefix for image paths, e.g. "imageBase": "gems/" */
+    const base = (typeof json.imageBase === 'string') ? json.imageBase : '';
+    const img  = v => {
+      if (!v) return '';
+      if (/^(https?:)?\/\//i.test(v) || v.startsWith('data:') || v.startsWith('/')) return v;
+      return base + v;
+    };
 
-      /* ── 4. Verdict line ───────────────────────── */
-      document.getElementById('verdict-text').textContent =
-        `Certified Genuine — All authenticity protocols passed. ${SPEC.species} confirmed by gemological analysis.`;
+    const SPEC = {
+      productNo   : pick('productNo',   '—'),
+      dimensions  : pick('dimensions',  '—'),
+      weight      : pick('weight',      '—'),
+      species     : pick('species',     'Natural Gemstone'),
+      variety     : pick('variety',     '—'),
+      origin      : pick('origin',      '—'),
+      shape       : pick('shape',       '—'),
+      ri          : pick('ri',          '—'),
+      sg          : pick('sg',          '—'),
+      optic       : pick('optic',       '—'),
+      colour      : pick('colour',      '—'),
+      frontImg    : img(pick('front',   '')),
+      backImg     : img(pick('back',    '')),
+      customObs   : pick('observation', ''),
+      customVerdict: pick('verdict',    '')
+    };
 
-    })();
+    const has = v => !!v && v !== '—' && String(v).trim() !== '';
+    const esc = s => String(s).replace(/[&<>"]/g, c =>
+      ({ '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;' }[c]));
+
+    /* ── 3. Specification table ──────────────────────────── */
+    const setText = (id, val) => {
+      const el = document.getElementById(id);
+      if (el) el.textContent = val;
+    };
+
+    setText('product-no',       SPEC.productNo);
+    setText('dimensions-value', SPEC.dimensions);
+    setText('weight-value',     SPEC.weight);
+    setText('species-value',    SPEC.species);
+    setText('variety-value',    SPEC.variety);
+    setText('origin-value',     SPEC.origin);
+    setText('shape-value',      SPEC.shape);
+    setText('ri-value',         SPEC.ri);
+    setText('sg-value',         SPEC.sg);
+    setText('optic-value',      SPEC.optic);
+    setText('colour-value',     SPEC.colour);
+
+    /* ── 4. Images + labels ──────────────────────────────── */
+    const placeholder = label =>
+      'data:image/svg+xml,' + encodeURIComponent(
+        '<svg xmlns="http://www.w3.org/2000/svg" width="600" height="290">' +
+        '<rect width="600" height="290" fill="#F4EFE6"/>' +
+        '<text x="50%" y="42%" font-size="48" fill="#C8A24C" text-anchor="middle" dy=".3em">\u25C8</text>' +
+        '<text x="50%" y="72%" font-size="13" fill="#7A6A53" text-anchor="middle">' + label + '</text>' +
+        '</svg>'
+      );
+
+    const frontEl = document.getElementById('front-img');
+    frontEl.src = SPEC.frontImg || placeholder('Table View');
+    frontEl.alt = SPEC.species + ' — Table View';
+
+    const backEl = document.getElementById('back-img');
+    backEl.src = SPEC.backImg || placeholder('Pavilion View');
+    backEl.alt = SPEC.species + ' — Pavilion View';
+
+    document.getElementById('front-label').innerHTML =
+      'Table View &nbsp;<span>· ' + esc(SPEC.species) + ' ·</span>&nbsp; Natural Facets';
+
+    document.getElementById('back-label').innerHTML =
+      'Pavilion View &nbsp;<span>· Internal Features ·</span>&nbsp; Unaltered';
+
+    /* ── 5. Observation paragraph ────────────────────────── */
+    function buildObservation() {
+      if (has(SPEC.customObs)) return SPEC.customObs;
+
+      const out = [];
+      out.push(
+        'Under high-magnification analysis, the specimen exhibits natural internal ' +
+        'characteristics consistent with ' + SPEC.species +
+        (has(SPEC.variety) ? ' (' + SPEC.variety + ')' : '') + '.'
+      );
+
+      const readings = [];
+      if (has(SPEC.ri))    readings.push('refractive index (' + SPEC.ri + ')');
+      if (has(SPEC.sg))    readings.push('specific gravity (' + SPEC.sg + ')');
+      if (has(SPEC.optic)) readings.push('optic character (' + SPEC.optic + ')');
+
+      if (readings.length) {
+        let list;
+        if (readings.length === 1) {
+          list = readings[0];
+        } else {
+          list = readings.slice(0, -1).join(', ') + ' and ' + readings[readings.length - 1];
+        }
+        list = list.charAt(0).toUpperCase() + list.slice(1);
+        out.push(
+          list + (readings.length === 1
+            ? ' reading falls within accepted parameters for this species.'
+            : ' readings all fall within accepted parameters for this species.')
+        );
+      }
+
+      if (has(SPEC.colour)) {
+        out.push('Colour is natural ' + SPEC.colour.toLowerCase() + '.');
+      }
+
+      out.push(
+        'No evidence of synthetic origin, glass filling, dyeing, or irradiation treatment detected.'
+      );
+
+      return out.join(' ');
+    }
+
+    document.getElementById('obs-paragraph').textContent = buildObservation();
+
+    /* ── 6. Verdict line ─────────────────────────────────── */
+    document.getElementById('verdict-text').textContent = has(SPEC.customVerdict)
+      ? SPEC.customVerdict
+      : 'Certified Genuine — All authenticity protocols passed. ' +
+        SPEC.species + ' confirmed by gemological analysis.';
+
+  })();
   </script>
 </body>
 </html>
