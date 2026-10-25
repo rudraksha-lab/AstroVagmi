@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Certificate Uploader • AstroVagmi</title>
+<style>
+  :root{--gold:#C8A24C;--amber:#D99938;--bg:#FDF9F2;--bg2:#F4EFE6;--txt:#2C2418;--sub:#7A6A53;--bd:#E8DFD0}
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:system-ui,-apple-system,sans-serif;background:var(--bg2);color:var(--txt);padding:2rem 1rem;min-height:100vh}
+  .wrap{max-width:640px;margin:0 auto;background:var(--bg);border:1.5px solid rgba(200,162,76,.4);border-radius:10px;padding:2rem;box-shadow:0 20px 50px rgba(44,36,24,.12)}
+  h1{font-size:1.4rem;margin-bottom:.3rem}
+  .sub{font-size:.82rem;color:var(--sub);margin-bottom:1.5rem}
+  fieldset{border:none;margin-bottom:1.2rem;padding:0}
+  legend{font-size:.68rem;letter-spacing:.18em;text-transform:uppercase;color:var(--amber);font-weight:600;margin-bottom:.7rem}
+  label{display:block;font-size:.72rem;color:var(--sub);margin-bottom:.3rem;font-weight:500}
+  input[type=text],input[type=number],textarea{width:100%;padding:.55rem .7rem;border:1px solid var(--bd);border-radius:6px;font-size:.9rem;background:#fff;font-family:inherit;margin-bottom:.85rem}
+  input:focus,textarea:focus{outline:2px solid var(--gold);border-color:transparent}
+  input[type=file]{width:100%;padding:.5rem;border:1px dashed var(--bd);border-radius:6px;font-size:.82rem;background:#fff;margin-bottom:.85rem}
+  .grid{display:grid;grid-template-columns:1fr 1fr;gap:.8rem}
+  .grid > div{margin:0}
+  button{width:100%;padding:.85rem;background:linear-gradient(135deg,var(--gold),var(--amber));color:#fff;border:none;border-radius:6px;font-size:.95rem;font-weight:600;cursor:pointer;letter-spacing:.05em}
+  button:disabled{opacity:.5;cursor:not-allowed}
+  #status{margin-top:1.2rem;padding:1rem;border-radius:6px;font-size:.82rem;line-height:1.55;white-space:pre-wrap;word-break:break-all;display:none}
+  #status.info{display:block;background:#eef4ff;border:1px solid #c9dcff;color:#1a3d7c}
+  #status.ok{display:block;background:#eaf7ea;border:1px solid #b5ddb5;color:#1f5a1f}
+  #status.err{display:block;background:#fdeaea;border:1px solid #f5c2c2;color:#8b1a1a}
+  #status a{color:inherit;text-decoration:underline;word-break:break-all}
+  .note{font-size:.7rem;color:var(--sub);font-style:italic;margin-top:.4rem}
+  @media(max-width:520px){.grid{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>📜 Certificate Uploader</h1>
+  <p class="sub">Uploads images → <strong>Rudraksha/</strong> &nbsp;·&nbsp; JSON → <strong>certificates/</strong></p>
+
+  <form id="form">
+    <fieldset>
+      <legend>Bead Specifications</legend>
+      <label>Product No. (e.g. 026-N12-002)</label>
+      <input type="text" id="productNo" required placeholder="026-N12-002">
+
+      <div class="grid">
+        <div><label>Mukhi Count</label><input type="number" id="mukhi" required min="1" max="27" value="12"></div>
+        <div><label>Shape</label><input type="text" id="shape" value="Oval"></div>
+        <div><label>Dimensions (mm)</label><input type="text" id="dimensions" value="27.3 × 22.4 × 17.1"></div>
+        <div><label>Weight</label><input type="text" id="weight" value="3.87 g"></div>
+        <div><label>Origin</label><input type="text" id="origin" value="Nepal"></div>
+      </div>
+    </fieldset>
+
+    <fieldset>
+      <legend>Images</legend>
+      <label>Front View</label>
+      <input type="file" id="frontFile" accept="image/*" required>
+      <label>Back View</label>
+      <input type="file" id="backFile" accept="image/*" required>
+      <p class="note">Files over 1 MB are auto-resized &amp; re-compressed to fit GitHub's API limit.</p>
+    </fieldset>
+
+    <fieldset>
+      <legend>Observation (optional)</legend>
+      <textarea id="observation" rows="3" placeholder="Leave blank to auto-generate from Mukhi count…"></textarea>
+    </fieldset>
+
+    <button type="submit" id="submitBtn">Upload &amp; Generate Link</button>
+  </form>
+
+  <div id="status"></div>
+</div>
+
+<script>
+/* ============================================================
+   ✅ Ready-to-use config for rudraksha-lab
+   ============================================================ */
+const CONFIG = {
+  token:  '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',
+  owner:  'rudraksha-lab',
+  repo:   'Astrovagmi',
+  branch: 'main',
+  imagesFolder:       'Rudraksha',        // ← images go here
+  certificatesFolder: 'certificates',
+  siteBaseUrl:        'https://rudraksha-lab.github.io/Astrovagmi/verify.html'
+};
+
+const API = `https://api.github.com/repos/${CONFIG.owner}/${CONFIG.repo}/contents`;
+const HDR = {
+  'Authorization': `Bearer ${CONFIG.token}`,
+  'Accept': 'application/vnd.github+json',
+  'X-GitHub-Api-Version': '2022-11-28'
+};
+
+const $ = id => document.getElementById(id);
+const form = $('form'), statusEl = $('status'), submitBtn = $('submitBtn');
+
+function setStatus(type, html){ statusEl.className = type; statusEl.innerHTML = html; }
+
+function blobToBase64(blob){
+  return new Promise((res, rej) => {
+    const r = new FileReader();
+    r.onload = () => res(r.result.split(',')[1]);
+    r.onerror = rej;
+    r.readAsDataURL(blob);
+  });
+}
+const strToBase64 = str => btoa(unescape(encodeURIComponent(str)));
+
+async function fitUnder1MB(file){
+  const MAX = 950 * 1024;
+  if (file.size <= MAX) return file;
+  return new Promise((resolve, reject) => {
+    const img = new Image();
+    img.onload = () => {
+      const MAX_DIM = 2400;
+      let { width, height } = img;
+      const scale = Math.min(1, MAX_DIM / Math.max(width, height));
+      width = Math.round(width * scale); height = Math.round(height * scale);
+      const c = document.createElement('canvas');
+      c.width = width; c.height = height;
+      c.getContext('2d').drawImage(img, 0, 0, width, height);
+      let q = 0.92;
+      const enc = () => c.toBlob(blob => {
+        if (!blob) return reject(new Error('Compression failed'));
+        if (blob.size <= MAX || q <= 0.4) {
+          const name = file.name.replace(/\.\w+$/, '') + '.jpg';
+          resolve(new File([blob], name, { type: 'image/jpeg' }));
+        } else { q -= 0.1; enc(); }
+      }, 'image/jpeg', q);
+      enc();
+    };
+    img.onerror = () => reject(new Error('Cannot load ' + file.name));
+    img.src = URL.createObjectURL(file);
+  });
+}
+
+async function getSha(path){
+  const res = await fetch(`${API}/${encodeURIComponent(path)}?ref=${CONFIG.branch}`, { headers: HDR });
+  if (res.status === 404) return null;
+  if (!res.ok) throw new Error(`GET ${path} → ${res.status}`);
+  return (await res.json()).sha;
+}
+
+async function putFile(path, base64Content, message){
+  const sha = await getSha(path);
+  const body = { message, content: base64Content, branch: CONFIG.branch };
+  if (sha) body.sha = sha;
+  const res = await fetch(`${API}/${encodeURIComponent(path)}`, {
+    method: 'PUT',
+    headers: { ...HDR, 'Content-Type': 'application/json' },
+    body: JSON.stringify(body)
+  });
+  if (!res.ok) {
+    const err = await res.json().catch(() => ({}));
+    throw new Error(`PUT ${path} → ${res.status}: ${err.message || res.statusText}`);
+  }
+  return res.json();
+}
+
+const safe = s => String(s).trim().replace(/[^a-zA-Z0-9._-]/g, '_');
+
+form.addEventListener('submit', async e => {
+  e.preventDefault();
+  submitBtn.disabled = true;
+  try {
+    const productNo = safe($('productNo').value);
+    if (!productNo) throw new Error('Product No. is required');
+
+    const mukhi      = $('mukhi').value.trim();
+    const dimensions = $('dimensions').value.trim();
+    const weight     = $('weight').value.trim();
+    const shape      = $('shape').value.trim();
+    const origin     = $('origin').value.trim();
+    const obsCustom  = $('observation').value.trim();
+
+    const frontFile = $('frontFile').files[0];
+    const backFile  = $('backFile').files[0];
+    if (!frontFile || !backFile) throw new Error('Both images required');
+
+    setStatus('info', '🖼 Preparing images…');
+    const [front, back] = await Promise.all([fitUnder1MB(frontFile), fitUnder1MB(backFile)]);
+
+    // 🔑 Auto-renamed to productNo, stored in Rudraksha/
+    const frontPath = `${CONFIG.imagesFolder}/${productNo}-Front.jpg`;
+    const backPath  = `${CONFIG.imagesFolder}/${productNo}-Back.jpg`;
+
+    setStatus('info', `⬆️ Uploading front (${(front.size/1024).toFixed(0)} KB)…`);
+    await putFile(frontPath, await blobToBase64(front), `Upload front image for ${productNo}`);
+
+    setStatus('info', `⬆️ Uploading back (${(back.size/1024).toFixed(0)} KB)…`);
+    await putFile(backPath, await blobToBase64(back), `Upload back image for ${productNo}`);
+
+    const observation = obsCustom ||
+      `Under high-magnification analysis, the bead exhibits ${mukhi} distinct, naturally formed mukhi lines with no evidence of artificial scoring or chemical treatment. Surface texture and internal structure are consistent with authentic Elaeocarpus ganitrus origin. No synthetic resin, pigment dyes, or tampering detected.`;
+
+    const json = {
+      productNo, mukhi, dimensions, weight, shape, origin,
+      front: frontPath, back: backPath, observation,
+      verdict: `Certified Genuine — All authenticity protocols passed. ${mukhi} Mukhi Rudraksha confirmed by gemological analysis.`,
+      updatedAt: new Date().toISOString()
+    };
+
+    const jsonPath = `${CONFIG.certificatesFolder}/${productNo}.json`;
+    setStatus('info', '⬆️ Uploading JSON…');
+    await putFile(jsonPath, strToBase64(JSON.stringify(json, null, 2)),
+                  `Upload certificate data for ${productNo}`);
+
+    const q = new URLSearchParams({
+      productNo, mukhi, dimensions, weight, shape, origin,
+      front: frontPath, back: backPath
+    });
+    const previewUrl = `${CONFIG.siteBaseUrl}?${q.toString()}`;
+
+    setStatus('ok',
+      `✅ Upload complete for ${productNo}\n\n` +
+      `📄 JSON: ${jsonPath}\n🖼 Front: ${frontPath}\n🖼 Back: ${backPath}\n\n` +
+      `🔗 Certificate link:\n<a href="${previewUrl}" target="_blank">${previewUrl}</a>`
+    );
+    form.reset();
+  } catch (err) {
+    console.error(err);
+    setStatus('err', `❌ Upload failed\n\n${err.message}`);
+  } finally {
+    submitBtn.disabled = false;
+  }
+});
+</script>
+</body>
+</html>
