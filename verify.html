@@ -3,6 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="robots" content="noindex">
   <title>Verified By: Nepal Rudraksha Lab • AstroVagmi</title>
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,600&family=IM+Fell+English:ital@0;1&family=Jost:wght@300;400;500;600&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
@@ -95,7 +96,6 @@
       overflow: hidden;
     }
 
-    /* subtle crosshatch watermark */
     .cert-header::before {
       content: "";
       position: absolute;
@@ -130,7 +130,6 @@
     }
     .brand-chip i { color: var(--amber); }
 
-    /* Logo */
     .logo-lockup {
       display: flex;
       align-items: center;
@@ -141,14 +140,9 @@
     .logo-lockup img {
       height: 52px;
       width: auto;
-      /* invert + tint to match gold palette */
       filter: sepia(1) saturate(1.8) hue-rotate(5deg) brightness(0.6);
     }
-    .brand-wordmark {
-      display: flex;
-      flex-direction: column;
-      align-items: flex-start;
-    }
+    .brand-wordmark { display:flex; flex-direction:column; align-items:flex-start; }
     .brand-name {
       font-family: 'Cormorant Garamond', serif;
       font-size: 2.6rem;
@@ -213,7 +207,7 @@
       background: linear-gradient(90deg, var(--border-gold), transparent);
     }
 
-    /* ── IMAGE GALLERY — always 2 columns ── */
+    /* ── IMAGE GALLERY ── */
     .image-gallery {
       display: grid;
       grid-template-columns: 1fr 1fr;
@@ -407,6 +401,58 @@
       margin-top: 0.2rem;
     }
 
+    /* ── LOADING / ERROR SCREENS ─────── */
+    .loading-screen, .error-screen {
+      width: 100%;
+      max-width: 480px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 2.5rem 1.5rem;
+    }
+    .loading-screen .spinner {
+      width: 46px;
+      height: 46px;
+      border: 3px solid var(--border-gold);
+      border-top-color: var(--gold);
+      border-radius: 50%;
+      animation: spin 0.9s linear infinite;
+      margin-bottom: 1.2rem;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .loading-screen p {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.1rem;
+      color: var(--text-secondary);
+      font-style: italic;
+    }
+    .error-screen .error-box {
+      background: var(--bg-main);
+      border: 1.5px solid var(--border-gold);
+      padding: 2.5rem 2rem;
+      box-shadow: 0 20px 50px rgba(44,36,24,0.10);
+      width: 100%;
+    }
+    .error-screen .error-icon {
+      font-size: 2.4rem;
+      color: var(--amber);
+      margin-bottom: 0.9rem;
+    }
+    .error-screen h2 {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.7rem;
+      color: var(--text-primary);
+      margin-bottom: 0.5rem;
+      letter-spacing: 0.02em;
+    }
+    .error-screen p {
+      font-size: 0.88rem;
+      color: var(--text-secondary);
+      line-height: 1.6;
+    }
+
     /* ── RESPONSIVE ─────────────────── */
     @media (max-width: 640px) {
       .cert-body { padding: 1.2rem; gap: 1.2rem; }
@@ -423,7 +469,24 @@
   </style>
 </head>
 <body>
-  <div class="frame">
+
+  <!-- LOADING -->
+  <div class="loading-screen" id="loadingScreen">
+    <div class="spinner"></div>
+    <p>Loading certificate…</p>
+  </div>
+
+  <!-- ERROR -->
+  <div class="error-screen" id="errorScreen" style="display:none;">
+    <div class="error-box">
+      <div class="error-icon"><i class="fas fa-exclamation-triangle"></i></div>
+      <h2>Certificate Not Available</h2>
+      <p id="errorMsg">We couldn't locate this certificate.</p>
+    </div>
+  </div>
+
+  <!-- MAIN CERTIFICATE -->
+  <div class="frame" id="certFrame" style="display:none;">
     <div class="frame-inner frame-bottom">
 
       <!-- HEADER -->
@@ -436,7 +499,6 @@
         <div class="gold-rule"></div>
 
         <div class="logo-lockup">
-          <!-- Logo replaced with simple png reference -->
           <img src="logo.png" alt="AstroVagmi Logo">
         </div>
 
@@ -455,25 +517,25 @@
       <!-- BODY -->
       <div class="cert-body">
 
-        <!-- Images — always 2 columns via CSS grid -->
+        <!-- Images -->
         <div>
           <div class="section-label"><i class="fas fa-eye"></i> Photographic Evidence</div>
           <div class="image-gallery">
             <div class="image-card">
               <img
                 id="front-img"
-                src="12-02-Front.jpg"
+                src=""
                 alt="Rudraksha Front View"
-                onerror="this.onerror=null;this.src='data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22600%22 height=%22290%22%3E%3Crect width=%22600%22 height=%22290%22 fill=%22%23F4EFE6%22/%3E%3Ctext x=%2250%25%22 y=%2242%25%22 font-size=%2248%22 fill=%22%23C8A24C%22 text-anchor=%22middle%22 dy=%22.3em%22%3Eॐ%3C/text%3E%3Ctext x=%2250%25%22 y=%2272%25%22 font-size=%2213%22 fill=%22%237A6A53%22 text-anchor=%22middle%22%3EFront View%3C/text%3E%3C/svg%3E';">
-              <div class="image-label" id="front-label">Front View &nbsp;<span>· 12 Mukhi ·</span>&nbsp; Natural Surface</div>
+                onerror="this.onerror=null;this.src='data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22600%22 height=%22290%22%3E%3Crect width=%22600%22 height=%22290%22 fill=%22%23F4EFE6%22/%3E%3Ctext x=%2250%25%22 y=%2242%25%22 font-size=%2248%22 fill=%22%23C8A24C%22 text-anchor=%22middle%22 dy=%22.3em%22%3E%E0%A5%90%3C/text%3E%3Ctext x=%2250%25%22 y=%2272%25%22 font-size=%2213%22 fill=%22%237A6A53%22 text-anchor=%22middle%22%3EFront View%3C/text%3E%3C/svg%3E';">
+              <div class="image-label" id="front-label">Front View</div>
             </div>
             <div class="image-card">
               <img
                 id="back-img"
-                src="12-02-Back.jpg"
+                src=""
                 alt="Rudraksha Back View"
-                onerror="this.onerror=null;this.src='data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22600%22 height=%22290%22%3E%3Crect width=%22600%22 height=%22290%22 fill=%22%23F4EFE6%22/%3E%3Ctext x=%2250%25%22 y=%2242%25%22 font-size=%2248%22 fill=%22%23C8A24C%22 text-anchor=%22middle%22 dy=%22.3em%22%3Eॐ%3C/text%3E%3Ctext x=%2250%25%22 y=%2272%25%22 font-size=%2213%22 fill=%22%237A6A53%22 text-anchor=%22middle%22%3EBack View%3C/text%3E%3C/svg%3E';">
-              <div class="image-label" id="back-label">Back View &nbsp;<span>· Natural Lines ·</span>&nbsp; Unaltered</div>
+                onerror="this.onerror=null;this.src='data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22600%22 height=%22290%22%3E%3Crect width=%22600%22 height=%22290%22 fill=%22%23F4EFE6%22/%3E%3Ctext x=%2250%25%22 y=%2242%25%22 font-size=%2248%22 fill=%22%23C8A24C%22 text-anchor=%22middle%22 dy=%22.3em%22%3E%E0%A5%90%3C/text%3E%3Ctext x=%2250%25%22 y=%2272%25%22 font-size=%2213%22 fill=%22%237A6A53%22 text-anchor=%22middle%22%3EBack View%3C/text%3E%3C/svg%3E';">
+              <div class="image-label" id="back-label">Back View</div>
             </div>
           </div>
         </div>
@@ -485,27 +547,27 @@
             <div class="details-grid">
               <div>
                 <div class="detail-label"><i class="fas fa-tag"></i> Product No.</div>
-                <div class="detail-value"><span class="id-pill" id="product-no">026-N12-002</span></div>
+                <div class="detail-value"><span class="id-pill" id="product-no">—</span></div>
               </div>
               <div>
                 <div class="detail-label"><i class="fas fa-ruler-combined"></i> Dimensions (mm)</div>
-                <div class="detail-value" id="dimensions-value">27.3 × 22.4 × 17.1</div>
+                <div class="detail-value" id="dimensions-value">—</div>
               </div>
               <div>
                 <div class="detail-label"><i class="fas fa-weight-hanging"></i> Weight</div>
-                <div class="detail-value" id="weight-value">3.87 g</div>
+                <div class="detail-value" id="weight-value">—</div>
               </div>
               <div>
                 <div class="detail-label"><i class="fas fa-star-of-david"></i> Mukhi Count</div>
-                <div class="detail-value" id="mukhi-value">12 Mukhi</div>
+                <div class="detail-value" id="mukhi-value">—</div>
               </div>
               <div>
                 <div class="detail-label"><i class="fas fa-shapes"></i> Shape</div>
-                <div class="detail-value" id="shape-value">Oval</div>
+                <div class="detail-value" id="shape-value">—</div>
               </div>
               <div>
                 <div class="detail-label"><i class="fas fa-map-marker-alt"></i> Origin</div>
-                <div class="detail-value" id="origin-value">Nepal</div>
+                <div class="detail-value" id="origin-value">—</div>
               </div>
             </div>
           </div>
@@ -515,12 +577,10 @@
         <div>
           <div class="section-label"><i class="fas fa-microscope"></i> Gemological Observation</div>
           <div class="obs-panel">
-            <p class="obs-text" id="obs-paragraph">
-              Under high-magnification analysis, the bead exhibits 12 distinct, naturally formed mukhi lines with no evidence of artificial scoring or chemical treatment. Surface texture and internal structure are consistent with authentic <em>Elaeocarpus ganitrus</em> origin. No synthetic resin, pigment dyes, or tampering detected.
-            </p>
+            <p class="obs-text" id="obs-paragraph">—</p>
             <div class="obs-verdict">
               <i class="fas fa-check-circle"></i>
-              Certified Genuine — All authenticity protocols passed. Twelve Mukhi Rudraksha confirmed by gemological analysis.
+              <span id="verdict-text">—</span>
             </div>
           </div>
         </div>
@@ -556,65 +616,101 @@
     </div><!-- /frame-inner -->
   </div><!-- /frame -->
 
-  <!-- Dynamic URL parameter script -->
+  <!-- ═══════════════════════════════════════════════════════
+       DYNAMIC LOADER — reads ?productNo=… only,
+       fetches certificates/{productNo}.json,
+       renders every field from the JSON.
+       ═══════════════════════════════════════════════════════ -->
   <script>
-    (function() {
-      const params = new URLSearchParams(window.location.search);
+  (async function () {
+    const loadingEl  = document.getElementById('loadingScreen');
+    const errorEl    = document.getElementById('errorScreen');
+    const certEl     = document.getElementById('certFrame');
+    const errorMsgEl = document.getElementById('errorMsg');
 
-      // Helper: get parameter or fallback to default
-      const get = (key, fallback) => params.get(key) || fallback;
+    function showError(msg) {
+      loadingEl.style.display = 'none';
+      certEl.style.display    = 'none';
+      errorEl.style.display   = 'flex';
+      errorMsgEl.textContent  = msg;
+    }
 
-      const mukhi      = get('mukhi', '12');
-      const productNo  = get('productNo', '026-N12-002');
-      const dimensions = get('dimensions', '27.3 × 22.4 × 17.1');
-      const weight     = get('weight', '3.87 g');
-      const shape      = get('shape', 'Oval');
-      const origin     = get('origin', 'Nepal');
-      const frontImg   = get('front', '12-02-Front.jpg');
-      const backImg    = get('back', '12-02-Back.jpg');
+    // 1. Read ?productNo= only
+    const params     = new URLSearchParams(window.location.search);
+    const productNoQ = (params.get('productNo') || '').trim();
 
-      // Product number pill
-      document.getElementById('product-no').textContent = productNo;
+    if (!productNoQ) {
+      return showError('No certificate number was provided. Please open the full link that contains ?productNo=YOUR-CERTIFICATE-ID.');
+    }
+    if (!/^[A-Za-z0-9._-]+$/.test(productNoQ)) {
+      return showError('The certificate number format is invalid.');
+    }
 
-      // Dimensions
-      document.getElementById('dimensions-value').textContent = dimensions;
+    // 2. Fetch the JSON
+    let data;
+    try {
+      const res = await fetch(`certificates/${encodeURIComponent(productNoQ)}.json`, { cache: 'no-cache' });
+      if (!res.ok) throw new Error('HTTP ' + res.status);
+      data = await res.json();
+    } catch (err) {
+      console.error('[verify] JSON fetch failed:', err);
+      return showError(`Certificate "${productNoQ}" could not be found in our records. Please double-check the link or contact support.`);
+    }
 
-      // Weight
-      document.getElementById('weight-value').textContent = weight;
+    if (!data || typeof data !== 'object') {
+      return showError('The certificate data appears to be malformed.');
+    }
 
-      // Mukhi count
-      document.getElementById('mukhi-value').textContent = `${mukhi} Mukhi`;
+    // 3. Normalise fields (fall back gracefully if some are missing)
+    const productNo  = data.productNo || productNoQ;
+    const mukhi      = data.mukhi      != null ? String(data.mukhi) : '';
+    const dimensions = data.dimensions || '—';
+    const weight     = data.weight     || '—';
+    const shape      = data.shape      || '—';
+    const origin     = data.origin     || '—';
+    const frontImg   = data.front      || '';
+    const backImg    = data.back       || '';
+    const observation = data.observation ||
+      `Under high-magnification analysis, the bead exhibits ${mukhi || 'multiple'} distinct, naturally formed mukhi lines with no evidence of artificial scoring or chemical treatment. Surface texture and internal structure are consistent with authentic <em>Elaeocarpus ganitrus</em> origin. No synthetic resin, pigment dyes, or tampering detected.`;
+    const verdict = data.verdict ||
+      `Certified Genuine — All authenticity protocols passed.${mukhi ? ' ' + mukhi + ' Mukhi Rudraksha' : ' Rudraksha'} confirmed by gemological analysis.`;
 
-      // Shape
-      document.getElementById('shape-value').textContent = shape;
+    // 4. Render
+    document.getElementById('product-no').textContent        = productNo;
+    document.getElementById('dimensions-value').textContent  = dimensions;
+    document.getElementById('weight-value').textContent      = weight;
+    document.getElementById('mukhi-value').textContent       = mukhi ? `${mukhi} Mukhi` : '—';
+    document.getElementById('shape-value').textContent       = shape;
+    document.getElementById('origin-value').textContent      = origin;
 
-      // Origin
-      document.getElementById('origin-value').textContent = origin;
+    const frontImgEl = document.getElementById('front-img');
+    const backImgEl  = document.getElementById('back-img');
 
-      // Front image + label
-      const frontImgEl = document.getElementById('front-img');
+    if (frontImg) {
       frontImgEl.src = frontImg;
       frontImgEl.alt = `Rudraksha Front View (${mukhi} Mukhi)`;
-      document.getElementById('front-label').innerHTML =
-        `Front View &nbsp;<span>· ${mukhi} Mukhi ·</span>&nbsp; Natural Surface`;
-
-      // Back image + label
-      const backImgEl = document.getElementById('back-img');
+    }
+    if (backImg) {
       backImgEl.src = backImg;
       backImgEl.alt = `Rudraksha Back View (${mukhi} Mukhi)`;
-      document.getElementById('back-label').innerHTML =
-        `Back View &nbsp;<span>· Natural Lines ·</span>&nbsp; Unaltered`;
+    }
 
-      // Observation paragraph – inject mukhi count
-      document.getElementById('obs-paragraph').innerHTML =
-        `Under high-magnification analysis, the bead exhibits ${mukhi} distinct, naturally formed mukhi lines with no evidence of artificial scoring or chemical treatment. Surface texture and internal structure are consistent with authentic <em>Elaeocarpus ganitrus</em> origin. No synthetic resin, pigment dyes, or tampering detected.`;
+    document.getElementById('front-label').innerHTML =
+      `Front View &nbsp;<span>· ${mukhi || '—'} Mukhi ·</span>&nbsp; Natural Surface`;
+    document.getElementById('back-label').innerHTML =
+      `Back View &nbsp;<span>· Natural Lines ·</span>&nbsp; Unaltered`;
 
-      // Optionally update the verdict text as well
-      const verdictEl = document.querySelector('.obs-verdict');
-      if (verdictEl) {
-        verdictEl.innerHTML = `<i class="fas fa-check-circle"></i> Certified Genuine — All authenticity protocols passed. ${mukhi} Mukhi Rudraksha confirmed by gemological analysis.`;
-      }
-    })();
+    // Observation may contain <em> tags — render as HTML
+    document.getElementById('obs-paragraph').innerHTML = observation;
+    document.getElementById('verdict-text').textContent = verdict;
+
+    // 5. Update page title
+    document.title = `Certificate ${productNo} • Verified By Nepal Rudraksha Lab • AstroVagmi`;
+
+    // 6. Reveal
+    loadingEl.style.display = 'none';
+    certEl.style.display    = 'block';
+  })();
   </script>
 </body>
 </html>
