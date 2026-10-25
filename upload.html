@@ -114,7 +114,6 @@ const form = $('form'), statusEl = $('status'), submitBtn = $('submitBtn');
 const tokenInput = $('tokenInput'), rememberChk = $('rememberToken');
 
 /* -------- token UX -------- */
-// Restore token if user ticked "remember"
 (function restoreToken(){
   const saved = localStorage.getItem(LS_KEY);
   if (saved){
@@ -135,7 +134,6 @@ function getToken(){
   if (!t.startsWith('github_pat_') && !t.startsWith('ghp_')) {
     throw new Error('That does not look like a GitHub token (should start with github_pat_ or ghp_).');
   }
-  // Persist or clear based on checkbox
   if (rememberChk.checked) localStorage.setItem(LS_KEY, t);
   else localStorage.removeItem(LS_KEY);
   return t;
@@ -226,7 +224,7 @@ form.addEventListener('submit', async e => {
   e.preventDefault();
   submitBtn.disabled = true;
   try {
-    const token = getToken();  // <-- read from input NOW, not from a constant
+    const token = getToken();
 
     const productNo = safe($('productNo').value);
     if (!productNo) throw new Error('Product No. is required');
@@ -254,12 +252,14 @@ form.addEventListener('submit', async e => {
     setStatus('info', `⬆️ Uploading back (${(back.size/1024).toFixed(0)} KB)…`);
     await putFile(backPath, await blobToBase64(back), `Upload back image for ${productNo}`, token);
 
+    // Observation now includes <em> tags so the certificate renders it beautifully.
     const observation = obsCustom ||
-      `Under high-magnification analysis, the bead exhibits ${mukhi} distinct, naturally formed mukhi lines with no evidence of artificial scoring or chemical treatment. Surface texture and internal structure are consistent with authentic Elaeocarpus ganitrus origin. No synthetic resin, pigment dyes, or tampering detected.`;
+      `Under high-magnification analysis, the bead exhibits ${mukhi} distinct, naturally formed mukhi lines with no evidence of artificial scoring or chemical treatment. Surface texture and internal structure are consistent with authentic <em>Elaeocarpus ganitrus</em> origin. No synthetic resin, pigment dyes, or tampering detected.`;
 
     const json = {
       productNo, mukhi, dimensions, weight, shape, origin,
-      front: frontPath, back: backPath, observation,
+      front: frontPath, back: backPath,
+      observation,
       verdict: `Certified Genuine — All authenticity protocols passed. ${mukhi} Mukhi Rudraksha confirmed by gemological analysis.`,
       updatedAt: new Date().toISOString()
     };
@@ -269,19 +269,16 @@ form.addEventListener('submit', async e => {
     await putFile(jsonPath, strToBase64(JSON.stringify(json, null, 2)),
                   `Upload certificate data for ${productNo}`, token);
 
-    const q = new URLSearchParams({
-      productNo, mukhi, dimensions, weight, shape, origin,
-      front: frontPath, back: backPath
-    });
-    const previewUrl = `${CONFIG.siteBaseUrl}?${q.toString()}`;
+    // 🔗 SHORT LINK — productNo only, everything else comes from JSON
+    const previewUrl = `${CONFIG.siteBaseUrl}?productNo=${encodeURIComponent(productNo)}`;
 
     setStatus('ok',
       `✅ Upload complete for ${productNo}\n\n` +
       `📄 JSON: ${jsonPath}\n🖼 Front: ${frontPath}\n🖼 Back: ${backPath}\n\n` +
       `🔗 Certificate link:\n<a href="${previewUrl}" target="_blank">${previewUrl}</a>`
     );
+
     form.reset();
-    // keep token if "remember" was checked
     if (rememberChk.checked) tokenInput.value = localStorage.getItem(LS_KEY) || '';
   } catch (err) {
     console.error(err);
