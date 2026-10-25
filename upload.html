@@ -14,19 +14,25 @@
   fieldset{border:none;margin-bottom:1.2rem;padding:0}
   legend{font-size:.68rem;letter-spacing:.18em;text-transform:uppercase;color:var(--amber);font-weight:600;margin-bottom:.7rem}
   label{display:block;font-size:.72rem;color:var(--sub);margin-bottom:.3rem;font-weight:500}
-  input[type=text],input[type=number],textarea{width:100%;padding:.55rem .7rem;border:1px solid var(--bd);border-radius:6px;font-size:.9rem;background:#fff;font-family:inherit;margin-bottom:.85rem}
+  input[type=text],input[type=number],input[type=password],textarea{width:100%;padding:.55rem .7rem;border:1px solid var(--bd);border-radius:6px;font-size:.9rem;background:#fff;font-family:inherit;margin-bottom:.85rem}
   input:focus,textarea:focus{outline:2px solid var(--gold);border-color:transparent}
   input[type=file]{width:100%;padding:.5rem;border:1px dashed var(--bd);border-radius:6px;font-size:.82rem;background:#fff;margin-bottom:.85rem}
   .grid{display:grid;grid-template-columns:1fr 1fr;gap:.8rem}
   .grid > div{margin:0}
-  button{width:100%;padding:.85rem;background:linear-gradient(135deg,var(--gold),var(--amber));color:#fff;border:none;border-radius:6px;font-size:.95rem;font-weight:600;cursor:pointer;letter-spacing:.05em}
-  button:disabled{opacity:.5;cursor:not-allowed}
+  .token-row{display:flex;gap:.5rem;align-items:flex-start}
+  .token-row input{flex:1;margin-bottom:0}
+  .token-row button{width:auto;padding:.55rem .9rem;font-size:.75rem;background:#fff;color:var(--txt);border:1px solid var(--bd);font-weight:500}
+  .remember{display:flex;align-items:center;gap:.4rem;font-size:.72rem;color:var(--sub);margin:.4rem 0 1rem}
+  .remember input{width:auto;margin:0}
+  button[type=submit]{width:100%;padding:.85rem;background:linear-gradient(135deg,var(--gold),var(--amber));color:#fff;border:none;border-radius:6px;font-size:.95rem;font-weight:600;cursor:pointer;letter-spacing:.05em;margin-top:.4rem}
+  button[type=submit]:disabled{opacity:.5;cursor:not-allowed}
   #status{margin-top:1.2rem;padding:1rem;border-radius:6px;font-size:.82rem;line-height:1.55;white-space:pre-wrap;word-break:break-all;display:none}
   #status.info{display:block;background:#eef4ff;border:1px solid #c9dcff;color:#1a3d7c}
   #status.ok{display:block;background:#eaf7ea;border:1px solid #b5ddb5;color:#1f5a1f}
   #status.err{display:block;background:#fdeaea;border:1px solid #f5c2c2;color:#8b1a1a}
   #status a{color:inherit;text-decoration:underline;word-break:break-all}
   .note{font-size:.7rem;color:var(--sub);font-style:italic;margin-top:.4rem}
+  .warn{font-size:.72rem;color:#8b1a1a;background:#fdeaea;border:1px solid #f5c2c2;border-radius:6px;padding:.6rem .8rem;margin-bottom:1rem;line-height:1.5}
   @media(max-width:520px){.grid{grid-template-columns:1fr}}
 </style>
 </head>
@@ -35,7 +41,24 @@
   <h1>📜 Certificate Uploader</h1>
   <p class="sub">Images → <strong>Rudraksha/</strong> &nbsp;·&nbsp; JSON → <strong>certificates/</strong> &nbsp;·&nbsp; Repo: <strong>AstroVagmi</strong></p>
 
+  <div class="warn">
+    🔑 <strong>Token required.</strong> Paste a fine-grained PAT with <strong>Contents: Read and write</strong> on <code>AstroVagmi</code>. It stays in your browser only — never uploaded anywhere except to GitHub's API.
+  </div>
+
   <form id="form">
+    <fieldset>
+      <legend>GitHub Access</legend>
+      <label>Personal Access Token</label>
+      <div class="token-row">
+        <input type="password" id="tokenInput" placeholder="github_pat_..." autocomplete="off" required>
+        <button type="button" id="toggleToken">Show</button>
+      </div>
+      <label class="remember">
+        <input type="checkbox" id="rememberToken">
+        Remember on this device (saved in browser localStorage)
+      </label>
+    </fieldset>
+
     <fieldset>
       <legend>Bead Specifications</legend>
       <label>Product No. (e.g. 026-N12-002)</label>
@@ -72,28 +95,61 @@
 
 <script>
 /* ============================================================
-   ✅ Config for rudraksha-lab / AstroVagmi
+   ✅ Config — no token stored here anymore
    ============================================================ */
 const CONFIG = {
-  token:  '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',
   owner:  'rudraksha-lab',
-  repo:   'AstroVagmi',                    // ← capital V
+  repo:   'AstroVagmi',
   branch: 'main',
   imagesFolder:       'Rudraksha',
   certificatesFolder: 'certificates',
-  siteBaseUrl:        'https://rudraksha-lab.github.io/AstroVagmi/verify.html'  // ← capital V
+  siteBaseUrl:        'https://rudraksha-lab.github.io/AstroVagmi/verify.html'
 };
 
 const API = `https://api.github.com/repos/${CONFIG.owner}/${CONFIG.repo}/contents`;
-const HDR = {
-  'Authorization': `Bearer ${CONFIG.token}`,
-  'Accept': 'application/vnd.github+json',
-  'X-GitHub-Api-Version': '2022-11-28'
-};
+const LS_KEY = 'astrovagmi_pat';
 
 const $ = id => document.getElementById(id);
 const form = $('form'), statusEl = $('status'), submitBtn = $('submitBtn');
+const tokenInput = $('tokenInput'), rememberChk = $('rememberToken');
 
+/* -------- token UX -------- */
+// Restore token if user ticked "remember"
+(function restoreToken(){
+  const saved = localStorage.getItem(LS_KEY);
+  if (saved){
+    tokenInput.value = saved;
+    rememberChk.checked = true;
+  }
+})();
+
+$('toggleToken').addEventListener('click', () => {
+  const isPwd = tokenInput.type === 'password';
+  tokenInput.type = isPwd ? 'text' : 'password';
+  $('toggleToken').textContent = isPwd ? 'Hide' : 'Show';
+});
+
+function getToken(){
+  const t = tokenInput.value.trim();
+  if (!t) throw new Error('Paste your Personal Access Token first.');
+  if (!t.startsWith('github_pat_') && !t.startsWith('ghp_')) {
+    throw new Error('That does not look like a GitHub token (should start with github_pat_ or ghp_).');
+  }
+  // Persist or clear based on checkbox
+  if (rememberChk.checked) localStorage.setItem(LS_KEY, t);
+  else localStorage.removeItem(LS_KEY);
+  return t;
+}
+
+function authHeaders(token){
+  return {
+    'Authorization': `Bearer ${token}`,
+    'Accept': 'application/vnd.github+json',
+    'X-GitHub-Api-Version': '2022-11-28'
+  };
+}
+
+/* -------- helpers -------- */
 function setStatus(type, html){ statusEl.className = type; statusEl.innerHTML = html; }
 
 function blobToBase64(blob){
@@ -134,23 +190,29 @@ async function fitUnder1MB(file){
   });
 }
 
-async function getSha(path){
-  const res = await fetch(`${API}/${encodeURIComponent(path)}?ref=${CONFIG.branch}`, { headers: HDR });
+async function getSha(path, token){
+  const res = await fetch(`${API}/${encodeURIComponent(path)}?ref=${CONFIG.branch}`, {
+    headers: authHeaders(token)
+  });
   if (res.status === 404) return null;
+  if (res.status === 401) throw new Error('401 Unauthorized — token is invalid or expired. Paste a fresh PAT.');
+  if (res.status === 403) throw new Error('403 Forbidden — token lacks Contents: Read and write on this repo.');
   if (!res.ok) throw new Error(`GET ${path} → ${res.status}`);
   return (await res.json()).sha;
 }
 
-async function putFile(path, base64Content, message){
-  const sha = await getSha(path);
+async function putFile(path, base64Content, message, token){
+  const sha = await getSha(path, token);
   const body = { message, content: base64Content, branch: CONFIG.branch };
   if (sha) body.sha = sha;
   const res = await fetch(`${API}/${encodeURIComponent(path)}`, {
     method: 'PUT',
-    headers: { ...HDR, 'Content-Type': 'application/json' },
+    headers: { ...authHeaders(token), 'Content-Type': 'application/json' },
     body: JSON.stringify(body)
   });
   if (!res.ok) {
+    if (res.status === 401) throw new Error('401 Unauthorized — token is invalid or expired.');
+    if (res.status === 403) throw new Error('403 Forbidden — token lacks Contents: Read and write.');
     const err = await res.json().catch(() => ({}));
     throw new Error(`PUT ${path} → ${res.status}: ${err.message || res.statusText}`);
   }
@@ -159,10 +221,13 @@ async function putFile(path, base64Content, message){
 
 const safe = s => String(s).trim().replace(/[^a-zA-Z0-9._-]/g, '_');
 
+/* -------- submit -------- */
 form.addEventListener('submit', async e => {
   e.preventDefault();
   submitBtn.disabled = true;
   try {
+    const token = getToken();  // <-- read from input NOW, not from a constant
+
     const productNo = safe($('productNo').value);
     if (!productNo) throw new Error('Product No. is required');
 
@@ -184,10 +249,10 @@ form.addEventListener('submit', async e => {
     const backPath  = `${CONFIG.imagesFolder}/${productNo}-Back.jpg`;
 
     setStatus('info', `⬆️ Uploading front (${(front.size/1024).toFixed(0)} KB)…`);
-    await putFile(frontPath, await blobToBase64(front), `Upload front image for ${productNo}`);
+    await putFile(frontPath, await blobToBase64(front), `Upload front image for ${productNo}`, token);
 
     setStatus('info', `⬆️ Uploading back (${(back.size/1024).toFixed(0)} KB)…`);
-    await putFile(backPath, await blobToBase64(back), `Upload back image for ${productNo}`);
+    await putFile(backPath, await blobToBase64(back), `Upload back image for ${productNo}`, token);
 
     const observation = obsCustom ||
       `Under high-magnification analysis, the bead exhibits ${mukhi} distinct, naturally formed mukhi lines with no evidence of artificial scoring or chemical treatment. Surface texture and internal structure are consistent with authentic Elaeocarpus ganitrus origin. No synthetic resin, pigment dyes, or tampering detected.`;
@@ -202,7 +267,7 @@ form.addEventListener('submit', async e => {
     const jsonPath = `${CONFIG.certificatesFolder}/${productNo}.json`;
     setStatus('info', '⬆️ Uploading JSON…');
     await putFile(jsonPath, strToBase64(JSON.stringify(json, null, 2)),
-                  `Upload certificate data for ${productNo}`);
+                  `Upload certificate data for ${productNo}`, token);
 
     const q = new URLSearchParams({
       productNo, mukhi, dimensions, weight, shape, origin,
@@ -216,6 +281,8 @@ form.addEventListener('submit', async e => {
       `🔗 Certificate link:\n<a href="${previewUrl}" target="_blank">${previewUrl}</a>`
     );
     form.reset();
+    // keep token if "remember" was checked
+    if (rememberChk.checked) tokenInput.value = localStorage.getItem(LS_KEY) || '';
   } catch (err) {
     console.error(err);
     setStatus('err', `❌ Upload failed\n\n${err.message}`);
