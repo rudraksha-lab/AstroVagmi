@@ -33,7 +33,7 @@
 <body>
 <div class="wrap">
   <h1>📜 Certificate Uploader</h1>
-  <p class="sub">Uploads images → <strong>Rudraksha/</strong> &nbsp;·&nbsp; JSON → <strong>certificates/</strong></p>
+  <p class="sub">Images → <strong>Rudraksha/</strong> &nbsp;·&nbsp; JSON → <strong>certificates/</strong> &nbsp;·&nbsp; Repo: <strong>AstroVagmi</strong></p>
 
   <form id="form">
     <fieldset>
@@ -72,16 +72,16 @@
 
 <script>
 /* ============================================================
-   ✅ Ready-to-use config for rudraksha-lab
+   ✅ Config for rudraksha-lab / AstroVagmi
    ============================================================ */
 const CONFIG = {
   token:  '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',
   owner:  'rudraksha-lab',
-  repo:   'Astrovagmi',
+  repo:   'AstroVagmi',                    // ← capital V
   branch: 'main',
-  imagesFolder:       'Rudraksha',        // ← images go here
+  imagesFolder:       'Rudraksha',
   certificatesFolder: 'certificates',
-  siteBaseUrl:        'https://rudraksha-lab.github.io/Astrovagmi/verify.html'
+  siteBaseUrl:        'https://rudraksha-lab.github.io/AstroVagmi/verify.html'  // ← capital V
 };
 
 const API = `https://api.github.com/repos/${CONFIG.owner}/${CONFIG.repo}/contents`;
@@ -180,7 +180,6 @@ form.addEventListener('submit', async e => {
     setStatus('info', '🖼 Preparing images…');
     const [front, back] = await Promise.all([fitUnder1MB(frontFile), fitUnder1MB(backFile)]);
 
-    // 🔑 Auto-renamed to productNo, stored in Rudraksha/
     const frontPath = `${CONFIG.imagesFolder}/${productNo}-Front.jpg`;
     const backPath  = `${CONFIG.imagesFolder}/${productNo}-Back.jpg`;
 
