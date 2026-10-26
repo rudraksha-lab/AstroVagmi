@@ -62,7 +62,6 @@
       position: relative;
     }
 
-    /* corner ornaments */
     .frame-inner::before, .frame-inner::after {
       content: "";
       position: absolute;
@@ -616,11 +615,13 @@
     </div><!-- /frame-inner -->
   </div><!-- /frame -->
 
-  <!-- ═══════════════════════════════════════════════════════
-       DYNAMIC LOADER — reads ?productNo=… only,
-       fetches certificates/{productNo}.json,
-       renders every field from the JSON.
-       ═══════════════════════════════════════════════════════ -->
+  <!-- ═══════════════════════════════════════════════════════════
+       LOADER — dual mode:
+         • New short links  (?productNo=…) → fetch certificates/{id}.json
+         • Old long links   (?productNo=…&mukhi=…&front=…&back=…)
+                            → fall back to reading URL params
+       Both render through the same render() function.
+       ═══════════════════════════════════════════════════════════ -->
   <script>
   (async function () {
     const loadingEl  = document.getElementById('loadingScreen');
@@ -635,7 +636,51 @@
       errorMsgEl.textContent  = msg;
     }
 
-    // 1. Read ?productNo= only
+    /* ── Shared renderer for both JSON and legacy params ── */
+    function render(data) {
+      const productNo  = data.productNo || '—';
+      const mukhi      = data.mukhi != null && data.mukhi !== '' ? String(data.mukhi) : '';
+      const dimensions = data.dimensions || '—';
+      const weight     = data.weight     || '—';
+      const shape      = data.shape      || '—';
+      const origin     = data.origin     || '—';
+      const frontImg   = data.front      || '';
+      const backImg    = data.back       || '';
+
+      const observation = data.observation ||
+        `Under high-magnification analysis, the bead exhibits ${mukhi || 'multiple'} distinct, naturally formed mukhi lines with no evidence of artificial scoring or chemical treatment. Surface texture and internal structure are consistent with authentic <em>Elaeocarpus ganitrus</em> origin. No synthetic resin, pigment dyes, or tampering detected.`;
+
+      const verdict = data.verdict ||
+        `Certified Genuine — All authenticity protocols passed.${mukhi ? ' ' + mukhi + ' Mukhi Rudraksha' : ' Rudraksha'} confirmed by gemological analysis.`;
+
+      document.getElementById('product-no').textContent       = productNo;
+      document.getElementById('dimensions-value').textContent = dimensions;
+      document.getElementById('weight-value').textContent     = weight;
+      document.getElementById('mukhi-value').textContent      = mukhi ? `${mukhi} Mukhi` : '—';
+      document.getElementById('shape-value').textContent      = shape;
+      document.getElementById('origin-value').textContent     = origin;
+
+      const frontImgEl = document.getElementById('front-img');
+      const backImgEl  = document.getElementById('back-img');
+
+      if (frontImg) { frontImgEl.src = frontImg; frontImgEl.alt = `Rudraksha Front View (${mukhi} Mukhi)`; }
+      if (backImg)  { backImgEl.src  = backImg;  backImgEl.alt  = `Rudraksha Back View (${mukhi} Mukhi)`; }
+
+      document.getElementById('front-label').innerHTML =
+        `Front View &nbsp;<span>· ${mukhi || '—'} Mukhi ·</span>&nbsp; Natural Surface`;
+      document.getElementById('back-label').innerHTML =
+        `Back View &nbsp;<span>· Natural Lines ·</span>&nbsp; Unaltered`;
+
+      document.getElementById('obs-paragraph').innerHTML = observation;
+      document.getElementById('verdict-text').textContent = verdict;
+
+      document.title = `Certificate ${productNo} • Verified By Nepal Rudraksha Lab • AstroVagmi`;
+
+      loadingEl.style.display = 'none';
+      certEl.style.display    = 'block';
+    }
+
+    /* ── 1. Read ?productNo= ── */
     const params     = new URLSearchParams(window.location.search);
     const productNoQ = (params.get('productNo') || '').trim();
 
@@ -646,70 +691,46 @@
       return showError('The certificate number format is invalid.');
     }
 
-    // 2. Fetch the JSON
-    let data;
+    /* ── 2. Try the JSON first (new short-link mode) ── */
     try {
       const res = await fetch(`certificates/${encodeURIComponent(productNoQ)}.json`, { cache: 'no-cache' });
-      if (!res.ok) throw new Error('HTTP ' + res.status);
-      data = await res.json();
+      if (res.ok) {
+        const data = await res.json();
+        if (data && typeof data === 'object') {
+          return render(data);
+        }
+        return showError('The certificate data appears to be malformed.');
+      }
+      // 404 → fall through to legacy URL mode
     } catch (err) {
-      console.error('[verify] JSON fetch failed:', err);
-      return showError(`Certificate "${productNoQ}" could not be found in our records. Please double-check the link or contact support.`);
+      console.warn('[verify] JSON fetch failed, trying legacy URL mode:', err);
     }
 
-    if (!data || typeof data !== 'object') {
-      return showError('The certificate data appears to be malformed.');
+    /* ── 3. Legacy fallback (old long URLs) ── */
+    const legacy = {
+      productNo : productNoQ,
+      mukhi      : params.get('mukhi'),
+      dimensions : params.get('dimensions'),
+      weight     : params.get('weight'),
+      shape      : params.get('shape'),
+      origin     : params.get('origin'),
+      front      : params.get('front'),
+      back       : params.get('back')
+    };
+
+    const hasLegacy = ['mukhi','dimensions','weight','shape','origin','front','back']
+      .some(k => legacy[k] != null && legacy[k] !== '');
+
+    if (hasLegacy) {
+      // Decode '+' back to spaces in dimensions/weight (common in old links)
+      if (legacy.dimensions) legacy.dimensions = legacy.dimensions.replace(/\+/g, ' ');
+      if (legacy.weight)     legacy.weight     = legacy.weight.replace(/\+/g, ' ');
+      if (legacy.origin)     legacy.origin     = legacy.origin.replace(/\+/g, ' ');
+      return render(legacy);
     }
 
-    // 3. Normalise fields (fall back gracefully if some are missing)
-    const productNo  = data.productNo || productNoQ;
-    const mukhi      = data.mukhi      != null ? String(data.mukhi) : '';
-    const dimensions = data.dimensions || '—';
-    const weight     = data.weight     || '—';
-    const shape      = data.shape      || '—';
-    const origin     = data.origin     || '—';
-    const frontImg   = data.front      || '';
-    const backImg    = data.back       || '';
-    const observation = data.observation ||
-      `Under high-magnification analysis, the bead exhibits ${mukhi || 'multiple'} distinct, naturally formed mukhi lines with no evidence of artificial scoring or chemical treatment. Surface texture and internal structure are consistent with authentic <em>Elaeocarpus ganitrus</em> origin. No synthetic resin, pigment dyes, or tampering detected.`;
-    const verdict = data.verdict ||
-      `Certified Genuine — All authenticity protocols passed.${mukhi ? ' ' + mukhi + ' Mukhi Rudraksha' : ' Rudraksha'} confirmed by gemological analysis.`;
-
-    // 4. Render
-    document.getElementById('product-no').textContent        = productNo;
-    document.getElementById('dimensions-value').textContent  = dimensions;
-    document.getElementById('weight-value').textContent      = weight;
-    document.getElementById('mukhi-value').textContent       = mukhi ? `${mukhi} Mukhi` : '—';
-    document.getElementById('shape-value').textContent       = shape;
-    document.getElementById('origin-value').textContent      = origin;
-
-    const frontImgEl = document.getElementById('front-img');
-    const backImgEl  = document.getElementById('back-img');
-
-    if (frontImg) {
-      frontImgEl.src = frontImg;
-      frontImgEl.alt = `Rudraksha Front View (${mukhi} Mukhi)`;
-    }
-    if (backImg) {
-      backImgEl.src = backImg;
-      backImgEl.alt = `Rudraksha Back View (${mukhi} Mukhi)`;
-    }
-
-    document.getElementById('front-label').innerHTML =
-      `Front View &nbsp;<span>· ${mukhi || '—'} Mukhi ·</span>&nbsp; Natural Surface`;
-    document.getElementById('back-label').innerHTML =
-      `Back View &nbsp;<span>· Natural Lines ·</span>&nbsp; Unaltered`;
-
-    // Observation may contain <em> tags — render as HTML
-    document.getElementById('obs-paragraph').innerHTML = observation;
-    document.getElementById('verdict-text').textContent = verdict;
-
-    // 5. Update page title
-    document.title = `Certificate ${productNo} • Verified By Nepal Rudraksha Lab • AstroVagmi`;
-
-    // 6. Reveal
-    loadingEl.style.display = 'none';
-    certEl.style.display    = 'block';
+    /* ── 4. Nothing worked → error ── */
+    return showError(`Certificate "${productNoQ}" could not be found in our records. Please double-check the link or contact support.`);
   })();
   </script>
 </body>
