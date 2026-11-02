@@ -415,7 +415,7 @@ function generateAutoCaption() {
 function generateAutoObservation() {
   const m = parseInt($('mukhi').value.trim(), 10);
   const tplName = getTemplate() === 'xray' ? 'X-Ray' : 'Magnification';
-  return m ? `${m}/${m} Natural Face,<br><br>${tplName} shows no any tampering which proves natural origin` : '';
+  return m ? `${m}/${m} Natural Face, ${tplName} shows no any tampering which proves natural origin` : '';
 }
 
 function generateAutoTests() {
