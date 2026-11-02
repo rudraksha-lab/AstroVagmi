@@ -2,290 +2,848 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Certificate Uploader • AstroVagmi</title>
+<meta name="viewport" content="initial-scale=1.0">
+<title>Astrovagmi Wellness LLP — Uploader</title>
+
+<!-- ============================================================
+     ✏️  PASTE YOUR BASE64 FONT DATA BELOW
+     ------------------------------------------------------------
+       REPLACE_WITH_THE_SEASONS_BASE64  → The Seasons OTF base64
+       REPLACE_WITH_LUCIDITY_BASE64     → Lucidity WOFF2 base64
+
+     Only the base64 characters — NOT the "data:font/...;base64," prefix.
+     ============================================================ -->
+<style id="embedded-certificate-fonts">
+@font-face {
+  font-family: "TheSeasonsEmbedded";
+  src: url("data:font/otf;base64,REPLACE_WITH_THE_SEASONS_BASE64") format("opentype");
+  font-weight: 400; font-style: normal; font-display: block;
+}
+@font-face {
+  font-family: "LucidityEmbedded";
+  src: url("data:font/woff2;base64,REPLACE_WITH_LUCIDITY_BASE64") format("woff2");
+  font-weight: 400; font-style: normal; font-display: block;
+}
+</style>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcode/1.5.0/qrcode.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+
 <style>
-  :root{--gold:#C8A24C;--amber:#D99938;--bg:#FDF9F2;--bg2:#F4EFE6;--txt:#2C2418;--sub:#7A6A53;--bd:#E8DFD0}
-  *{box-sizing:border-box;margin:0;padding:0}
-  body{font-family:system-ui,-apple-system,sans-serif;background:var(--bg2);color:var(--txt);padding:2rem 1rem;min-height:100vh}
-  .wrap{max-width:640px;margin:0 auto;background:var(--bg);border:1.5px solid rgba(200,162,76,.4);border-radius:10px;padding:2rem;box-shadow:0 20px 50px rgba(44,36,24,.12)}
-  h1{font-size:1.4rem;margin-bottom:.3rem}
-  .sub{font-size:.82rem;color:var(--sub);margin-bottom:1.5rem}
-  fieldset{border:none;margin-bottom:1.2rem;padding:0}
-  legend{font-size:.68rem;letter-spacing:.18em;text-transform:uppercase;color:var(--amber);font-weight:600;margin-bottom:.7rem}
-  label{display:block;font-size:.72rem;color:var(--sub);margin-bottom:.3rem;font-weight:500}
-  input[type=text],input[type=number],input[type=password],textarea{width:100%;padding:.55rem .7rem;border:1px solid var(--bd);border-radius:6px;font-size:.9rem;background:#fff;font-family:inherit;margin-bottom:.85rem}
-  input:focus,textarea:focus{outline:2px solid var(--gold);border-color:transparent}
-  input[type=file]{width:100%;padding:.5rem;border:1px dashed var(--bd);border-radius:6px;font-size:.82rem;background:#fff;margin-bottom:.85rem}
-  .grid{display:grid;grid-template-columns:1fr 1fr;gap:.8rem}
-  .grid > div{margin:0}
-  .token-row{display:flex;gap:.5rem;align-items:flex-start}
-  .token-row input{flex:1;margin-bottom:0}
-  .token-row button{width:auto;padding:.55rem .9rem;font-size:.75rem;background:#fff;color:var(--txt);border:1px solid var(--bd);font-weight:500}
-  .remember{display:flex;align-items:center;gap:.4rem;font-size:.72rem;color:var(--sub);margin:.4rem 0 1rem}
-  .remember input{width:auto;margin:0}
-  button[type=submit]{width:100%;padding:.85rem;background:linear-gradient(135deg,var(--gold),var(--amber));color:#fff;border:none;border-radius:6px;font-size:.95rem;font-weight:600;cursor:pointer;letter-spacing:.05em;margin-top:.4rem}
-  button[type=submit]:disabled{opacity:.5;cursor:not-allowed}
-  #status{margin-top:1.2rem;padding:1rem;border-radius:6px;font-size:.82rem;line-height:1.55;white-space:pre-wrap;word-break:break-all;display:none}
-  #status.info{display:block;background:#eef4ff;border:1px solid #c9dcff;color:#1a3d7c}
-  #status.ok{display:block;background:#eaf7ea;border:1px solid #b5ddb5;color:#1f5a1f}
-  #status.err{display:block;background:#fdeaea;border:1px solid #f5c2c2;color:#8b1a1a}
-  #status a{color:inherit;text-decoration:underline;word-break:break-all}
-  .note{font-size:.7rem;color:var(--sub);font-style:italic;margin-top:.4rem}
-  .warn{font-size:.72rem;color:#8b1a1a;background:#fdeaea;border:1px solid #f5c2c2;border-radius:6px;padding:.6rem .8rem;margin-bottom:1rem;line-height:1.5}
-  @media(max-width:520px){.grid{grid-template-columns:1fr}}
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; background: #f4f5f8; }
+  body { font-family: Arial, Helvetica, sans-serif; }
+
+  .editor {
+    max-width: 900px; margin: 0 auto; padding: 18px;
+    display: flex; flex-direction: column; gap: 18px; align-items: stretch;
+  }
+  .app-title { margin: 4px 0 0; text-align: center; font-size: 30px; font-weight: 700; color: #173e70; letter-spacing: .4px; }
+
+  .template-chooser { background: #fff; border: 1px solid #d8dce5; border-radius: 12px; padding: 14px 16px; box-shadow: 0 4px 18px rgba(0,0,0,.08); }
+  .template-chooser .chooser-label { font-size: 11px; font-weight: 700; color: #7a8aa5; letter-spacing: 1px; text-transform: uppercase; margin-bottom: 8px; }
+  .template-options { display: flex; gap: 10px; flex-wrap: wrap; }
+  .template-option {
+    position: relative; display: inline-flex; align-items: center; gap: 8px;
+    padding: 10px 16px; border: 2px solid #c9ced8; border-radius: 8px;
+    cursor: pointer; font-size: 13px; font-weight: 700; color: #333;
+    background: #fafbfd; transition: all .15s ease; user-select: none;
+  }
+  .template-option input { position: absolute; opacity: 0; pointer-events: none; }
+  .template-option:hover { border-color: #8a9ab5; }
+  .template-option.active { border-color: #284d7c; background: #eaf1fb; color: #173e70; }
+  .template-option .dot { width: 14px; height: 14px; border-radius: 50%; border: 2px solid #8a9ab5; background: #fff; position: relative; }
+  .template-option.active .dot { border-color: #284d7c; }
+  .template-option.active .dot::after { content: ""; position: absolute; inset: 2px; border-radius: 50%; background: #284d7c; }
+
+  .controls { background: #fff; border: 1px solid #d8dce5; border-radius: 12px; padding: 16px; box-shadow: 0 4px 18px rgba(0,0,0,.08); }
+  .controls h2 { margin: 0 0 4px; color: #173e70; font-size: 20px; }
+  .controls .subheading { font-size: 11px; color: #888; margin-bottom: 10px; letter-spacing: .3px; text-transform: uppercase; }
+  .controls label { display: block; font-size: 11.5px; font-weight: 700; color: #333; margin: 9px 0 4px; letter-spacing: .2px; }
+  .controls label .req { color: #c0392b; font-weight: 700; }
+  .controls input[type=text],
+  .controls input[type=number],
+  .controls input[type=password],
+  .controls input[type=file],
+  .controls textarea {
+    width: 100%; border: 1px solid #c9ced8; border-radius: 6px;
+    padding: 8px; font: 13px Arial, sans-serif; background: #fff; color: #1a1a1a;
+  }
+  .controls textarea { min-height: 60px; resize: vertical; line-height: 1.4; }
+  .controls .row { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+  .controls .divider { height: 1px; background: #e6e9f0; margin: 12px 0 6px; }
+  .controls .divider-label { font-size: 10.5px; font-weight: 700; color: #7a8aa5; letter-spacing: 1px; text-transform: uppercase; margin-bottom: 6px; }
+  .controls button {
+    width: 100%; margin-top: 14px; padding: 11px 12px;
+    border: 0; border-radius: 7px; background: #284d7c;
+    color: #fff; font-weight: 700; cursor: pointer; font-size: 14px;
+  }
+  .controls button:disabled { background: #8a9ab5; cursor: wait; }
+  #downloadBtn { background: #157347; margin-top: 10px; }
+
+  .status { margin-top: 12px; font-size: 12.5px; line-height: 1.5; padding: 8px 10px; border-radius: 6px; background: #eef2f7; color: #2c4a6e; min-height: 20px; white-space: pre-wrap; word-break: break-word; }
+  .status.ok   { background: #d9f2e1; color: #186b3a; }
+  .status.err  { background: #fbe0e0; color: #8a1b1b; }
+  .status.busy { background: #fff5d6; color: #7a5c00; }
+
+  .progress { margin-top: 8px; height: 6px; background: #e2e7f0; border-radius: 3px; overflow: hidden; display: none; }
+  .progress.active { display: block; }
+  .progress-bar { height: 100%; width: 0%; background: #284d7c; transition: width .25s ease; }
+
+  .hint { margin-top: 12px; font-size: 11px; line-height: 1.5; color: #666; border-top: 1px dashed #d3d8e0; padding-top: 10px; }
+  .hint code { background: #eef2f7; padding: 1px 5px; border-radius: 3px; font-size: 10.5px; }
+
+  .cert-area { background: #fff; border: 1px solid #d8dce5; border-radius: 12px; padding: 14px; box-shadow: 0 4px 18px rgba(0,0,0,.08); }
+  .cert-scroll { overflow: hidden; text-align: center; }
+  .cert-scale-outer { display: inline-block; overflow: hidden; vertical-align: top; border-radius: 4px; box-shadow: 0 4px 15px rgba(0,0,0,0.15); }
+  .cert-scale-inner { transform-origin: top left; display: inline-block; }
+
+  /* CERTIFICATE STYLES */
+  .certificate { width: 1200px; height: 762px; position: relative; overflow: hidden; background: #FAF4E5; color: #3A2B1E; }
+  
+  .topbar { position: absolute; left: 0; top: 0; width: 100%; height: 178px; background: #C19F51; }
+  
+  /* Verified By — LEFT aligned, parallel to address */
+  .verified-by { 
+    position: absolute; 
+    left: 25px; 
+    top: 95px; 
+    text-align: left; 
+    color: #3A2B1E; 
+    font-family: "TheSeasonsEmbedded", Georgia, serif; 
+    font-size: 24px; 
+    line-height: 1.3; 
+  }
+  
+  .lab-title { position: absolute; top: 25px; left: 0; width: 100%; text-align: center; color: #FFFFFF; font-family: "TheSeasonsEmbedded", Georgia, serif; font-size: 54px; font-weight: 400; white-space: nowrap; }
+  
+  /* Address — CENTER aligned text, block centered on page */
+  .address-container { 
+    position: absolute; 
+    top: 95px; 
+    left: 0; 
+    width: 100%; 
+    display: flex; 
+    justify-content: center; 
+    align-items: flex-start; 
+    gap: 10px; 
+    color: #FFFFFF; 
+    font-family: "TheSeasonsEmbedded", Georgia, serif; 
+    font-size: 26px; 
+    line-height: 1.3; 
+    text-align: center; 
+  }
+  .pin-wrap { width: 30px; height: 30px; margin-top: 3px; }
+  .pin svg { display: block; width: 100%; height: 100%; color: #FFFFFF; }
+  
+  .heading { position: absolute; top: 200px; left: 0; width: 100%; text-align: center; color: #2E2218; font-family: "TheSeasonsEmbedded", Georgia, serif; font-size: 50px; font-weight: 400; white-space: nowrap; }
+  
+  .rule { position: absolute; left: 190px; top: 262px; width: 820px; height: 4px; background: #C19F51; }
+  .rule:before, .rule:after { content: ""; position: absolute; top: -10px; width: 24px; height: 24px; background: #FAF4E5; border: 4px solid #C19F51; border-radius: 50%; }
+  .rule:before { left: -3px; } .rule:after { right: -3px; }
+  
+  .photo-box { position: absolute; left: 30px; top: 290px; width: 230px; height: 230px; background: #fff; overflow: hidden; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
+  .photo-box img { width: 100%; height: 100%; object-fit: contain; display: block; }
+  
+  .type-box {
+    position: absolute; left: 30px; top: 560px; width: 230px; height: 160px;
+    border: 3px solid #C19F51; background: #FAF4E5; color: #3A2B1E;
+    display: flex; align-items: center; justify-content: center; text-align: center;
+    padding: 10px; font-family: "LucidityEmbedded", Arial, sans-serif;
+    font-size: 24px; line-height: 1.35; letter-spacing: .2px;
+  }
+  
+  /* ===== COMPRESSED: line-height 1.5→1.35, padding 35x40→28x35 so Genus/Country fits ===== */
+  .data-panel { 
+    position: absolute; left: 290px; top: 275px; width: 620px; height: 450px; 
+    border-radius: 30px; background: #C19F51; padding: 28px 35px; 
+    color: #FFFFFF; font-family: "LucidityEmbedded", Arial, sans-serif; 
+    font-weight: 700; font-size: 24px; line-height: 1.35; overflow: hidden; 
+  }
+  
+  /* ===== COMPRESSED: row bottom margin 12→6 ===== */
+  .data-row { display: grid; grid-template-columns: 220px 25px 1fr; margin: 0 0 6px; }
+  
+  /* Labels explicitly LEFT aligned */
+  .data-row .label { 
+    white-space: nowrap; 
+    text-align: left; 
+  }
+  
+  .data-row .colon { text-align: center; }
+  
+  /* Values keep their existing left alignment */
+  .data-row .value { min-width: 0; text-align: left; }
+  
+  /* ===== COMPRESSED: observation margin-top 15→8, line-height 1.6→1.45, font 23→22 ===== */
+  .observation { margin-top: 8px; }
+  .observation .value { line-height: 1.45; font-size: 22px; }
+  
+  /* ===== COMPRESSED: genus margin-top 25→10 so it fits inside 450px panel ===== */
+  .genus { margin-top: 10px; }
+  .genus .value { font-style: normal; font-size: 22px; }
+  
+  .qr-box { position: absolute; right: 40px; top: 290px; width: 240px; height: 240px; background: #fff; padding: 5px; overflow: hidden; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
+  .qr-box img, .qr-box canvas { width: 100%; height: 100%; object-fit: contain; display: block; }
+  
+  .qr-label { 
+    position: absolute; right: 40px; top: 560px; width: 240px; height: 160px; 
+    border: 3px solid #C19F51; background: #FAF4E5; color: #3A2B1E; 
+    display: flex; align-items: center; justify-content: center; text-align: center; 
+    padding: 10px; font-family: "LucidityEmbedded", Arial, sans-serif; 
+    font-size: 26px; line-height: 1.35; 
+  }
 </style>
 </head>
 <body>
-<div class="wrap">
-  <h1>📜 Certificate Uploader</h1>
-  <p class="sub">Images → <strong>Rudraksha/</strong> &nbsp;·&nbsp; JSON → <strong>certificates/</strong> &nbsp;·&nbsp; Repo: <strong>AstroVagmi</strong></p>
 
-  <div class="warn">
-    🔑 <strong>Token required.</strong> Paste a fine-grained PAT with <strong>Contents: Read and write</strong> on <code>AstroVagmi</code>. It stays in your browser only — never uploaded anywhere except to GitHub's API.
+<div class="editor">
+
+  <h1 class="app-title">Astrovagmi Wellness LLP — Uploader</h1>
+
+  <!-- TEMPLATE CHOOSER -->
+  <div class="template-chooser">
+    <div class="chooser-label">Choose Template</div>
+    <div class="template-options">
+      <label class="template-option active" data-template="magnification">
+        <input type="radio" name="template" value="magnification" checked>
+        <span class="dot"></span><span>Magnification</span>
+      </label>
+      <label class="template-option" data-template="xray">
+        <input type="radio" name="template" value="xray">
+        <span class="dot"></span><span>X-Ray</span>
+      </label>
+    </div>
   </div>
 
-  <form id="form">
-    <fieldset>
-      <legend>GitHub Access</legend>
-      <label>Personal Access Token</label>
-      <div class="token-row">
-        <input type="password" id="tokenInput" placeholder="github_pat_..." autocomplete="off" required>
-        <button type="button" id="toggleToken">Show</button>
+  <!-- CONTROLS -->
+  <div class="controls">
+    <h2>Upload Certificate</h2>
+    <div class="subheading">Fill the fields, pick images, upload</div>
+
+    <label>GitHub PAT <span class="req">*</span> <span style="color:#888;font-weight:400;">(Contents: Read &amp; Write)</span></label>
+    <input type="password" id="pat" placeholder="github_pat_..." autocomplete="off">
+
+    <label>Product Number <span class="req">*</span></label>
+    <input type="text" id="productNo" placeholder="026-N12-005">
+
+    <label>Front Image <span class="req">*</span> <span style="color:#888;font-weight:400;">(BG auto-removed → white square on upload)</span></label>
+    <input type="file" id="frontFile" accept="image/*">
+
+    <label>Back Image <span class="req">*</span> <span style="color:#888;font-weight:400;">(BG auto-removed → white square on upload)</span></label>
+    <input type="file" id="backFile" accept="image/*">
+
+    <div id="xraySection" style="display:none;">
+      <label>X-Ray Image <span class="req">*</span> <span style="color:#888;font-weight:400;">(uploaded as-is, no BG removal)</span></label>
+      <input type="file" id="xrayFile" accept="image/*">
+    </div>
+
+    <div class="divider"></div>
+    <div class="divider-label">Certificate Data</div>
+
+    <div class="row">
+      <div>
+        <label>Mukhi Count <span class="req">*</span></label>
+        <input type="number" id="mukhi" placeholder="12" min="1" max="33" value="12">
       </div>
-      <label class="remember">
-        <input type="checkbox" id="rememberToken">
-        Remember on this device (saved in browser localStorage)
-      </label>
-    </fieldset>
-
-    <fieldset>
-      <legend>Bead Specifications</legend>
-      <label>Product No. (e.g. 026-N12-002)</label>
-      <input type="text" id="productNo" required placeholder="026-N12-002">
-
-      <div class="grid">
-        <div><label>Mukhi Count</label><input type="number" id="mukhi" required min="1" max="27" value="12"></div>
-        <div><label>Shape</label><input type="text" id="shape" value="Oval"></div>
-        <div><label>Dimensions (mm)</label><input type="text" id="dimensions" value="27.3 × 22.4 × 17.1"></div>
-        <div><label>Weight</label><input type="text" id="weight" value="3.87 g"></div>
-        <div><label>Origin</label><input type="text" id="origin" value="Nepal"></div>
+      <div>
+        <label>Shape</label>
+        <input type="text" id="shape" placeholder="Oval" value="Oval">
       </div>
-    </fieldset>
+    </div>
 
-    <fieldset>
-      <legend>Images</legend>
-      <label>Front View</label>
-      <input type="file" id="frontFile" accept="image/*" required>
-      <label>Back View</label>
-      <input type="file" id="backFile" accept="image/*" required>
-      <p class="note">Files over 1 MB are auto-resized &amp; re-compressed to fit GitHub's API limit.</p>
-    </fieldset>
+    <div class="row">
+      <div>
+        <label>Weight (gm.)</label>
+        <input type="text" id="weight" placeholder="3.02">
+      </div>
+      <div>
+        <label>Dimension (mm.)</label>
+        <input type="text" id="dimension" placeholder="20.6 x 20.4 x 12.3">
+      </div>
+    </div>
 
-    <fieldset>
-      <legend>Observation (optional)</legend>
-      <textarea id="observation" rows="3" placeholder="Leave blank to auto-generate from Mukhi count…"></textarea>
-    </fieldset>
+    <label>Tests Carried Out <span style="color:#888;font-weight:400;">(auto from Template)</span></label>
+    <input type="text" id="tests" placeholder="Auto-fills from template…">
 
-    <button type="submit" id="submitBtn">Upload &amp; Generate Link</button>
-  </form>
+    <label>Observation <span style="color:#888;font-weight:400;">(auto from Mukhi + Template)</span></label>
+    <textarea id="observation" placeholder="Enter Mukhi to auto-fill…"></textarea>
 
-  <div id="status"></div>
+    <label>Genus / Country</label>
+    <input type="text" id="genus" placeholder="Elaeocarpus E.Ganitrus (Nepal)" value="Elaeocarpus E.Ganitrus (Nepal)">
+
+    <label>Caption <span style="color:#888;font-weight:400;">(auto from Mukhi)</span></label>
+    <input type="text" id="caption" placeholder="Enter Mukhi to auto-fill…">
+
+    <button id="uploadBtn" type="button">Upload &amp; Generate Certificate</button>
+    <button id="downloadBtn" type="button" style="display:none;">Download Certificate as PNG</button>
+
+    <div class="progress" id="progressWrap"><div class="progress-bar" id="progressBar"></div></div>
+    <div class="status" id="status">Ready. Live preview updates automatically.</div>
+
+    <div class="hint">
+      <b>Magnification</b> → <code>Magnification/{productNo}/</code> → <code>final.html?cert=</code><br>
+      <b>X-Ray</b> → <code>X-Ray/{productNo}/</code> → <code>final-xray.html?cert=</code><br><br>
+      Files:<br>
+      <code>{productNo}-front.jpg</code> (bg removed)<br>
+      <code>{productNo}-back.jpg</code> (bg removed)<br>
+      <code>{productNo}-xray.{ext}</code> (X-Ray only, raw)<br>
+      <code>{productNo}.json</code>
+    </div>
+  </div>
+
+  <!-- CERTIFICATE LIVE PREVIEW -->
+  <div class="cert-area">
+    <div class="cert-scroll" id="certScroll">
+      <div class="cert-scale-outer" id="certScaleOuter">
+        <div class="cert-scale-inner" id="certScaleInner">
+          <div class="certificate" id="certificate">
+            <div class="topbar"></div>
+            
+            <!-- Verified By — LEFT aligned -->
+            <div class="verified-by">Verified By:<br>Nepal Rudraksha Lab</div>
+            
+            <div class="lab-title">ASTROVAGMI WELLNESS LLP.</div>
+            
+            <!-- Address — CENTER aligned -->
+            <div class="address-container">
+              <span class="pin-wrap"><span class="pin">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
+                  <circle cx="12" cy="10" r="3"></circle>
+                </svg>
+              </span></span>
+              <div>
+                GK Tower -2nd Floor ,Chakkaraparambu Road<br>
+                Ernakulam, Kerala 682032
+              </div>
+            </div>
+            
+            <div class="heading">RUDRAKSHA CERTIFICATION</div>
+            <div class="rule"></div>
+            
+            <div class="photo-box"><img id="photoPreview" alt="Rudraksha" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7"></div>
+            <div class="type-box" id="captionOut">TWELVE FACE<br>RUDRAKSHA<br>(FRONT)</div>
+            
+            <div class="data-panel">
+              <div class="data-row"><span class="label">Product No.:</span><span class="colon">:</span><span class="value" id="productOut">026-N12-005</span></div>
+              <div class="data-row"><span class="label">Shape:</span><span class="colon">:</span><span class="value" id="shapeOut">Oval</span></div>
+              <div class="data-row"><span class="label">Weight (gm.):</span><span class="colon">:</span><span class="value" id="weightOut">3.02</span></div>
+              <div class="data-row"><span class="label">Dimension(mm.):</span><span class="colon">:</span><span class="value" id="dimensionOut">20.6 x 20.4 x 12.3</span></div>
+              <div class="data-row"><span class="label">Tests Carried Out:</span><span class="colon">:</span><span class="value" id="testsOut">Magnification</span></div>
+              
+              <div class="data-row observation"><span class="label">Observation:</span><span class="colon">:</span><span class="value" id="observationOut">12/12 Natural Face,<br><br>Magnification shows no any tampering which proves natural origin</span></div>
+              
+              <div class="data-row genus"><span class="label">Genus/Country:</span><span class="colon">:</span><span class="value" id="genusOut">Elaeocarpus E.Ganitrus (Nepal)</span></div>
+            </div>
+            
+            <div class="qr-box"><img id="qrPreview" alt="QR code"></div>
+            <div class="qr-label">SCAN QR<br>FOR<br>REPORT</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
 </div>
 
 <script>
-/* ============================================================
-   ✅ Config — no token stored here anymore
-   ============================================================ */
-const CONFIG = {
-  owner:  'rudraksha-lab',
-  repo:   'AstroVagmi',
-  branch: 'main',
-  imagesFolder:       'Rudraksha',
-  certificatesFolder: 'certificates',
-  siteBaseUrl:        'https://rudraksha-lab.github.io/AstroVagmi/verify.html'
+/* CONFIG */
+const REPO_OWNER = 'businessdevil';
+const REPO_NAME  = 'NRL-Rudraksha';
+const BRANCH     = 'main';
+const TEMPLATES = {
+  magnification: { folder: 'Magnification', certPage: 'https://businessdevil.github.io/NRL-Rudraksha/final.html' },
+  xray:          { folder: 'X-Ray',         certPage: 'https://businessdevil.github.io/NRL-Rudraksha/final-xray.html' }
 };
-
-const API = `https://api.github.com/repos/${CONFIG.owner}/${CONFIG.repo}/contents`;
-const LS_KEY = 'astrovagmi_pat';
+const MODEL_URL    = 'https://huggingface.co/tomjackson2023/rembg/resolve/main/u2netp.onnx';
+const CACHE_KEY    = 'bg-remover-u2netp-v1';
+const INPUT        = 320;
+const PAD          = 0.08;
+const MAX_SIDE     = 900;
+const ALPHA_MIN    = 12;
+const TARGET_BYTES = 90 * 1024;
+const WASM_BASE    = 'https://cdn.jsdelivr.net/npm/onnxruntime-web@1.18.0/dist/';
+const CERT_W = 1200, CERT_H = 762;
 
 const $ = id => document.getElementById(id);
-const form = $('form'), statusEl = $('status'), submitBtn = $('submitBtn');
-const tokenInput = $('tokenInput'), rememberChk = $('rememberToken');
+const statusEl = $('status');
+const uploadBtn = $('uploadBtn');
+const downloadBtn = $('downloadBtn');
+const progressWrap = $('progressWrap');
+const progressBar  = $('progressBar');
 
-/* -------- token UX -------- */
-(function restoreToken(){
-  const saved = localStorage.getItem(LS_KEY);
-  if (saved){
-    tokenInput.value = saved;
-    rememberChk.checked = true;
-  }
-})();
+function setStatus(msg, kind = '') {
+  statusEl.textContent = msg;
+  statusEl.className = 'status' + (kind ? ' ' + kind : '');
+}
+function setProgress(pct) {
+  if (pct == null) { progressWrap.classList.remove('active'); progressBar.style.width = '0%'; }
+  else { progressWrap.classList.add('active'); progressBar.style.width = Math.max(0, Math.min(100, pct)) + '%'; }
+}
 
-$('toggleToken').addEventListener('click', () => {
-  const isPwd = tokenInput.type === 'password';
-  tokenInput.type = isPwd ? 'text' : 'password';
-  $('toggleToken').textContent = isPwd ? 'Hide' : 'Show';
+/* TEMPLATE TOGGLE */
+function getTemplate() {
+  const c = document.querySelector('input[name="template"]:checked');
+  return c ? c.value : 'magnification';
+}
+document.querySelectorAll('input[name="template"]').forEach(r => {
+  r.addEventListener('change', () => {
+    const v = getTemplate();
+    document.querySelectorAll('.template-option').forEach(el => el.classList.toggle('active', el.dataset.template === v));
+    $('xraySection').style.display = (v === 'xray') ? 'block' : 'none';
+    updateAutoFields();
+    updateLivePreview();
+  });
 });
 
-function getToken(){
-  const t = tokenInput.value.trim();
-  if (!t) throw new Error('Paste your Personal Access Token first.');
-  if (!t.startsWith('github_pat_') && !t.startsWith('ghp_')) {
-    throw new Error('That does not look like a GitHub token (should start with github_pat_ or ghp_).');
+/* AUTO-FILL — Caption, Observation & Tests from Mukhi + Template */
+let lastAutoCaption = '';
+let lastAutoObservation = '';
+let lastAutoTests = '';
+
+function generateAutoCaption() {
+  const m = parseInt($('mukhi').value.trim(), 10);
+  return m ? `${numberToWord(m)} FACE RUDRAKSHA (FRONT)` : '';
+}
+
+function generateAutoObservation() {
+  const m = parseInt($('mukhi').value.trim(), 10);
+  const tplName = getTemplate() === 'xray' ? 'X-Ray' : 'Magnification';
+  return m ? `${m}/${m} Natural Face,<br><br>${tplName} shows no any tampering which proves natural origin` : '';
+}
+
+function generateAutoTests() {
+  return getTemplate() === 'xray' ? 'X-Ray' : 'Magnification';
+}
+
+function updateAutoFields() {
+  const capEl = $('caption');
+  const obsEl = $('observation');
+  const testEl = $('tests');
+  const newCap = generateAutoCaption();
+  const newObs = generateAutoObservation().replace(/<br>/g, '\n');
+  const newTests = generateAutoTests();
+
+  if (!capEl.value || capEl.value === lastAutoCaption) {
+    capEl.value = newCap;
+    lastAutoCaption = newCap;
   }
-  if (rememberChk.checked) localStorage.setItem(LS_KEY, t);
-  else localStorage.removeItem(LS_KEY);
-  return t;
+  if (!obsEl.value || obsEl.value === lastAutoObservation) {
+    obsEl.value = newObs;
+    lastAutoObservation = newObs;
+  }
+  if (!testEl.value || testEl.value === lastAutoTests) {
+    testEl.value = newTests;
+    lastAutoTests = newTests;
+  }
 }
 
-function authHeaders(token){
-  return {
-    'Authorization': `Bearer ${token}`,
-    'Accept': 'application/vnd.github+json',
-    'X-GitHub-Api-Version': '2022-11-28'
-  };
+/* LIVE PREVIEW BINDINGS */
+function updateLivePreview() {
+  const productNo = $('productNo').value.trim() || '—';
+  const shape = $('shape').value.trim() || '—';
+  const weight = $('weight').value.trim() || '—';
+  const dimension = $('dimension').value.trim() || '—';
+  const tests = $('tests').value.trim() || '—';
+  const genus = $('genus').value.trim() || '—';
+  const mukhi = parseInt($('mukhi').value, 10);
+
+  $('productOut').textContent = productNo;
+  $('shapeOut').textContent = shape;
+  $('weightOut').textContent = weight;
+  $('dimensionOut').textContent = dimension;
+  $('testsOut').textContent = tests;
+  $('genusOut').textContent = genus;
+
+  let obsText = $('observation').value.trim();
+  $('observationOut').innerHTML = obsText ? obsText.replace(/\n/g, '<br>') : '—';
+
+  let caption = $('caption').value.trim() || (mukhi ? `${numberToWord(mukhi)} FACE RUDRAKSHA (FRONT)` : 'RUDRAKSHA');
+  caption = caption.replace(/\bFACE\b/i, 'FACE<br>').replace(/\(FRONT\)/i, '<br>(FRONT)').replace(/\n/g, '<br>');
+  $('captionOut').innerHTML = caption;
+
+  const certPage = TEMPLATES[getTemplate()].certPage;
+  const qrTarget = `${certPage}?cert=${encodeURIComponent(productNo !== '—' ? productNo : 'Preview')}`;
+  
+  QRCode.toDataURL(qrTarget, { width: 400, margin: 1, errorCorrectionLevel: 'H' }, (err, url) => {
+    if (!err) $('qrPreview').src = url;
+  });
 }
 
-/* -------- helpers -------- */
-function setStatus(type, html){ statusEl.className = type; statusEl.innerHTML = html; }
+['productNo', 'shape', 'weight', 'dimension', 'tests', 'observation', 'genus', 'caption', 'mukhi'].forEach(id => {
+  $(id).addEventListener('input', () => {
+    if (id === 'mukhi') updateAutoFields();
+    updateLivePreview();
+  });
+});
 
-function blobToBase64(blob){
+/* IMAGE PREVIEW */
+$('frontFile').addEventListener('change', (e) => {
+  const file = e.target.files[0];
+  if (file) {
+    const reader = new FileReader();
+    reader.onload = (re) => { $('photoPreview').src = re.target.result; };
+    reader.readAsDataURL(file);
+  }
+});
+
+/* FIT */
+function fitCertificate() {
+  const area = document.querySelector('.cert-area');
+  const outer = $('certScaleOuter');
+  const inner = $('certScaleInner');
+  if (!area || !outer || !inner) return;
+  
+  const availW = Math.max(200, area.clientWidth - 16 - 28);
+  let scale = availW / CERT_W;
+  if (scale > 1) scale = 1;
+  if (scale < 0.25) scale = 0.25;
+  
+  outer.style.width  = Math.round(CERT_W * scale) + 'px';
+  outer.style.height = Math.round(CERT_H * scale) + 'px';
+  inner.style.transform = `scale(${scale})`;
+}
+window.addEventListener('resize', fitCertificate);
+
+/* HELPERS */
+function blobToDataURL(blob) {
   return new Promise((res, rej) => {
     const r = new FileReader();
-    r.onload = () => res(r.result.split(',')[1]);
+    r.onload = () => res(r.result);
     r.onerror = rej;
     r.readAsDataURL(blob);
   });
 }
-const strToBase64 = str => btoa(unescape(encodeURIComponent(str)));
-
-async function fitUnder1MB(file){
-  const MAX = 950 * 1024;
-  if (file.size <= MAX) return file;
-  return new Promise((resolve, reject) => {
-    const img = new Image();
-    img.onload = () => {
-      const MAX_DIM = 2400;
-      let { width, height } = img;
-      const scale = Math.min(1, MAX_DIM / Math.max(width, height));
-      width = Math.round(width * scale); height = Math.round(height * scale);
-      const c = document.createElement('canvas');
-      c.width = width; c.height = height;
-      c.getContext('2d').drawImage(img, 0, 0, width, height);
-      let q = 0.92;
-      const enc = () => c.toBlob(blob => {
-        if (!blob) return reject(new Error('Compression failed'));
-        if (blob.size <= MAX || q <= 0.4) {
-          const name = file.name.replace(/\.\w+$/, '') + '.jpg';
-          resolve(new File([blob], name, { type: 'image/jpeg' }));
-        } else { q -= 0.1; enc(); }
-      }, 'image/jpeg', q);
-      enc();
-    };
-    img.onerror = () => reject(new Error('Cannot load ' + file.name));
-    img.src = URL.createObjectURL(file);
-  });
+function blobToBase64(blob) {
+  return blobToDataURL(blob).then(d => d.split(',')[1]);
 }
 
-async function getSha(path, token){
-  const res = await fetch(`${API}/${encodeURIComponent(path)}?ref=${CONFIG.branch}`, {
-    headers: authHeaders(token)
-  });
+/* COMPRESSION */
+async function compressToTarget(bitmap, targetBytes) {
+  let w = bitmap.width, h = bitmap.height;
+  const maxDim = 1600;
+  if (Math.max(w, h) > maxDim) { const s = maxDim / Math.max(w, h); w = Math.round(w * s); h = Math.round(h * s); }
+  const canvas = document.createElement('canvas');
+  canvas.width = w; canvas.height = h;
+  const ctx = canvas.getContext('2d');
+  ctx.fillStyle = '#ffffff'; ctx.fillRect(0, 0, w, h);
+  ctx.imageSmoothingQuality = 'high'; ctx.drawImage(bitmap, 0, 0, w, h);
+  let q = 0.9;
+  let blob = await new Promise(r => canvas.toBlob(r, 'image/jpeg', q));
+  while (blob.size > targetBytes && q > 0.35) { q -= 0.05; blob = await new Promise(r => canvas.toBlob(r, 'image/jpeg', q)); }
+  while (blob.size > targetBytes && canvas.width > 320) {
+    w = Math.round(canvas.width * 0.85); h = Math.round(canvas.height * 0.85);
+    canvas.width = w; canvas.height = h;
+    ctx.fillStyle = '#ffffff'; ctx.fillRect(0, 0, w, h);
+    ctx.imageSmoothingQuality = 'high'; ctx.drawImage(bitmap, 0, 0, w, h);
+    q = 0.7; blob = await new Promise(r => canvas.toBlob(r, 'image/jpeg', q));
+    while (blob.size > targetBytes && q > 0.35) { q -= 0.05; blob = await new Promise(r => canvas.toBlob(r, 'image/jpeg', q)); }
+  }
+  return blob;
+}
+
+/* ONNX */
+let _ortModule = null, _sessionPromise = null;
+function getSession() {
+  if (_sessionPromise) return _sessionPromise;
+  _sessionPromise = (async () => {
+    if (!_ortModule) {
+      setStatus('📦 Loading ONNX runtime…', 'busy');
+      _ortModule = await import('https://esm.sh/onnxruntime-web@1.18.0');
+      _ortModule.env.wasm.wasmPaths = WASM_BASE;
+      _ortModule.env.wasm.numThreads = 1;
+      _ortModule.env.wasm.simd = true;
+    }
+    const ort = _ortModule;
+    let modelBuffer = null;
+    try { const c = await caches.open(CACHE_KEY); const hit = await c.match(MODEL_URL); if (hit) modelBuffer = await hit.arrayBuffer(); } catch (e) {}
+    if (!modelBuffer) {
+      setStatus('⬇ Downloading AI model (~4.7 MB, one-time)…', 'busy');
+      const res = await fetch(MODEL_URL);
+      if (!res.ok) throw new Error(`Model download failed (${res.status})`);
+      modelBuffer = await res.arrayBuffer();
+      try { const c = await caches.open(CACHE_KEY); await c.put(MODEL_URL, new Response(modelBuffer.slice(0))); } catch (e) {}
+    }
+    setStatus('⚙ Initializing AI runtime…', 'busy');
+    const session = await ort.InferenceSession.create(modelBuffer, { executionProviders: ['wasm'], graphOptimizationLevel: 'all' });
+    return { ort, session };
+  })();
+  return _sessionPromise;
+}
+
+/* WHITE SQUARE */
+async function whiteSquareFromAlpha(srcCanvas, targetBytes) {
+  const W = srcCanvas.width, H = srcCanvas.height;
+  const srcData = srcCanvas.getContext('2d').getImageData(0, 0, W, H).data;
+  let minX = W, minY = H, maxX = -1, maxY = -1;
+  for (let y = 0; y < H; y++) {
+    const row = y * W * 4;
+    for (let x = 0; x < W; x++) {
+      if (srcData[row + x * 4 + 3] > ALPHA_MIN) {
+        if (x < minX) minX = x; if (x > maxX) maxX = x;
+        if (y < minY) minY = y; if (y > maxY) maxY = y;
+      }
+    }
+  }
+  if (maxX < 0) { minX = 0; minY = 0; maxX = W - 1; maxY = H - 1; }
+  const bw = maxX - minX + 1, bh = maxY - minY + 1;
+  const sideRaw = Math.round(Math.max(bw, bh) * (1 + PAD * 2));
+  const finalSide = Math.min(sideRaw, MAX_SIDE);
+  const out = document.createElement('canvas');
+  out.width = finalSide; out.height = finalSide;
+  const outCtx = out.getContext('2d');
+  outCtx.imageSmoothingQuality = 'high';
+  outCtx.fillStyle = '#ffffff'; outCtx.fillRect(0, 0, finalSide, finalSide);
+  const scl = finalSide / sideRaw;
+  const dw = bw * scl, dh = bh * scl;
+  outCtx.drawImage(srcCanvas, minX, minY, bw, bh, (finalSide - dw) / 2, (finalSide - dh) / 2, dw, dh);
+  let q = 0.9;
+  let blob = await new Promise(r => out.toBlob(r, 'image/jpeg', q));
+  while (blob.size > targetBytes && q > 0.35) { q -= 0.05; blob = await new Promise(r => out.toBlob(r, 'image/jpeg', q)); }
+  return blob;
+}
+
+/* BG REMOVE */
+async function removeBackground(file, label = 'image') {
+  setStatus(`[${label}] Pre-processing…`, 'busy');
+  const srcBitmap = await createImageBitmap(file);
+  const preBlob = await compressToTarget(srcBitmap, TARGET_BYTES);
+  const inpBitmap = await createImageBitmap(preBlob);
+
+  setStatus(`[${label}] Normalizing…`, 'busy');
+  const tmp = document.createElement('canvas');
+  tmp.width = INPUT; tmp.height = INPUT;
+  const tctx = tmp.getContext('2d');
+  tctx.imageSmoothingQuality = 'high'; tctx.drawImage(inpBitmap, 0, 0, INPUT, INPUT);
+  const px = tctx.getImageData(0, 0, INPUT, INPUT).data;
+  const mean = [0.485, 0.456, 0.406], std = [0.229, 0.224, 0.225];
+  const N = INPUT * INPUT;
+  const f32 = new Float32Array(3 * N);
+  for (let i = 0; i < N; i++) {
+    f32[i] = (px[i * 4] / 255 - mean[0]) / std[0];
+    f32[i + N] = (px[i * 4 + 1] / 255 - mean[1]) / std[1];
+    f32[i + 2 * N] = (px[i * 4 + 2] / 255 - mean[2]) / std[2];
+  }
+
+  setStatus(`[${label}] Running AI (u2netp)…`, 'busy');
+  const { ort, session } = await getSession();
+  const tensor = new ort.Tensor('float32', f32, [1, 3, INPUT, INPUT]);
+  const results = await session.run({ [session.inputNames[0]]: tensor });
+  const maskRaw = results[session.outputNames[0]].data;
+
+  let mn = Infinity, mx = -Infinity;
+  for (let i = 0; i < maskRaw.length; i++) { const v = maskRaw[i]; if (v < mn) mn = v; if (v > mx) mx = v; }
+  const rng = (mx - mn) || 1;
+
+  const maskCanvas = document.createElement('canvas');
+  maskCanvas.width = INPUT; maskCanvas.height = INPUT;
+  const mCtx = maskCanvas.getContext('2d');
+  const mImg = mCtx.createImageData(INPUT, INPUT);
+  for (let i = 0; i < N; i++) {
+    const a = Math.max(0, Math.min(255, Math.round(((maskRaw[i] - mn) / rng) * 255)));
+    mImg.data[i * 4] = 255; mImg.data[i * 4 + 1] = 255; mImg.data[i * 4 + 2] = 255; mImg.data[i * 4 + 3] = a;
+  }
+  mCtx.putImageData(mImg, 0, 0);
+
+  setStatus(`[${label}] Compositing…`, 'busy');
+  const W = inpBitmap.width, H = inpBitmap.height;
+  const comp = document.createElement('canvas');
+  comp.width = W; comp.height = H;
+  const cctx = comp.getContext('2d');
+  cctx.imageSmoothingQuality = 'high';
+  cctx.drawImage(maskCanvas, 0, 0, W, H);
+  cctx.globalCompositeOperation = 'source-in';
+  cctx.drawImage(inpBitmap, 0, 0, W, H);
+
+  setStatus(`[${label}] Cropping & centering…`, 'busy');
+  return await whiteSquareFromAlpha(comp, TARGET_BYTES);
+}
+
+/* GITHUB */
+async function getFileSha(token, path) {
+  const url = `https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/${path}?ref=${BRANCH}`;
+  const res = await fetch(url, { headers: { 'Authorization': `Bearer ${token}`, 'Accept': 'application/vnd.github+json' } });
   if (res.status === 404) return null;
-  if (res.status === 401) throw new Error('401 Unauthorized — token is invalid or expired. Paste a fresh PAT.');
-  if (res.status === 403) throw new Error('403 Forbidden — token lacks Contents: Read and write on this repo.');
-  if (!res.ok) throw new Error(`GET ${path} → ${res.status}`);
-  return (await res.json()).sha;
+  if (!res.ok) throw new Error(`SHA check failed (${res.status}) for ${path}`);
+  const d = await res.json();
+  return d.sha;
 }
-
-async function putFile(path, base64Content, message, token){
-  const sha = await getSha(path, token);
-  const body = { message, content: base64Content, branch: CONFIG.branch };
+async function uploadFile(token, path, base64Content) {
+  const sha = await getFileSha(token, path);
+  const url = `https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/${path}`;
+  const body = { message: `Add/update ${path.split('/').pop()}`, content: base64Content, branch: BRANCH };
   if (sha) body.sha = sha;
-  const res = await fetch(`${API}/${encodeURIComponent(path)}`, {
+  const res = await fetch(url, {
     method: 'PUT',
-    headers: { ...authHeaders(token), 'Content-Type': 'application/json' },
+    headers: { 'Authorization': `Bearer ${token}`, 'Accept': 'application/vnd.github+json', 'Content-Type': 'application/json' },
     body: JSON.stringify(body)
   });
   if (!res.ok) {
-    if (res.status === 401) throw new Error('401 Unauthorized — token is invalid or expired.');
-    if (res.status === 403) throw new Error('403 Forbidden — token lacks Contents: Read and write.');
     const err = await res.json().catch(() => ({}));
-    throw new Error(`PUT ${path} → ${res.status}: ${err.message || res.statusText}`);
+    throw new Error(err.message || `Upload failed (${res.status}) for ${path}`);
   }
   return res.json();
 }
 
-const safe = s => String(s).trim().replace(/[^a-zA-Z0-9._-]/g, '_');
+/* NUMBER→WORD */
+const WORD = ['ZERO','ONE','TWO','THREE','FOUR','FIVE','SIX','SEVEN','EIGHT','NINE','TEN','ELEVEN','TWELVE','THIRTEEN','FOURTEEN','FIFTEEN','SIXTEEN','SEVENTEEN','EIGHTEEN','NINETEEN','TWENTY','TWENTY-ONE','TWENTY-TWO','TWENTY-THREE','TWENTY-FOUR','TWENTY-FIVE','TWENTY-SIX','TWENTY-SEVEN','TWENTY-EIGHT','TWENTY-NINE','THIRTY','THIRTY-ONE','THIRTY-TWO','THIRTY-THREE'];
+const numberToWord = n => WORD[n] || String(n);
 
-/* -------- submit -------- */
-form.addEventListener('submit', async e => {
-  e.preventDefault();
-  submitBtn.disabled = true;
+/* MAIN UPLOAD */
+uploadBtn.addEventListener('click', async () => {
+  const template = getTemplate();
+  const isXray = template === 'xray';
+  const tpl = TEMPLATES[template];
+
+  const token     = $('pat').value.trim();
+  const productNo = $('productNo').value.trim();
+  const frontFile = $('frontFile').files[0];
+  const backFile  = $('backFile').files[0];
+  const xrayFile  = isXray ? $('xrayFile').files[0] : null;
+  const mukhiRaw  = $('mukhi').value.trim();
+
+  if (!token) return setStatus('⚠ Please enter your GitHub PAT.', 'err');
+  if (!productNo) return setStatus('⚠ Please enter a product number.', 'err');
+  if (!frontFile) return setStatus('⚠ Please select a front image.', 'err');
+  if (!backFile) return setStatus('⚠ Please select a back image.', 'err');
+  if (isXray && !xrayFile) return setStatus('⚠ Please select an X-Ray image.', 'err');
+  if (!mukhiRaw || isNaN(parseInt(mukhiRaw))) return setStatus('⚠ Please enter a valid Mukhi count.', 'err');
+
+  uploadBtn.disabled = true;
+  downloadBtn.style.display = 'none';
+  setProgress(0);
+
   try {
-    const token = getToken();
-
-    const productNo = safe($('productNo').value);
-    if (!productNo) throw new Error('Product No. is required');
-
-    const mukhi      = $('mukhi').value.trim();
-    const dimensions = $('dimensions').value.trim();
-    const weight     = $('weight').value.trim();
-    const shape      = $('shape').value.trim();
-    const origin     = $('origin').value.trim();
-    const obsCustom  = $('observation').value.trim();
-
-    const frontFile = $('frontFile').files[0];
-    const backFile  = $('backFile').files[0];
-    if (!frontFile || !backFile) throw new Error('Both images required');
-
-    setStatus('info', '🖼 Preparing images…');
-    const [front, back] = await Promise.all([fitUnder1MB(frontFile), fitUnder1MB(backFile)]);
-
-    const frontPath = `${CONFIG.imagesFolder}/${productNo}-Front.jpg`;
-    const backPath  = `${CONFIG.imagesFolder}/${productNo}-Back.jpg`;
-
-    setStatus('info', `⬆️ Uploading front (${(front.size/1024).toFixed(0)} KB)…`);
-    await putFile(frontPath, await blobToBase64(front), `Upload front image for ${productNo}`, token);
-
-    setStatus('info', `⬆️ Uploading back (${(back.size/1024).toFixed(0)} KB)…`);
-    await putFile(backPath, await blobToBase64(back), `Upload back image for ${productNo}`, token);
-
-    // Observation now includes <em> tags so the certificate renders it beautifully.
-    const observation = obsCustom ||
-      `Under high-magnification analysis, the bead exhibits ${mukhi} distinct, naturally formed mukhi lines with no evidence of artificial scoring or chemical treatment. Surface texture and internal structure are consistent with authentic <em>Elaeocarpus ganitrus</em> origin. No synthetic resin, pigment dyes, or tampering detected.`;
-
-    const json = {
-      productNo, mukhi, dimensions, weight, shape, origin,
-      front: frontPath, back: backPath,
-      observation,
-      verdict: `Certified Genuine — All authenticity protocols passed. ${mukhi} Mukhi Rudraksha confirmed by gemological analysis.`,
-      updatedAt: new Date().toISOString()
+    const mukhiNum = parseInt(mukhiRaw);
+    const data = {
+      productNo, certNo: productNo, mukhi: mukhiNum,
+      shape: $('shape').value.trim() || 'Oval',
+      weight: $('weight').value.trim(),
+      dimension: $('dimension').value.trim(),
+      tests: $('tests').value.trim() || (isXray ? 'X-Ray' : 'Magnification'),
+      observation: $('observation').value.trim(),
+      genus: $('genus').value.trim() || 'Elaeocarpus E.Ganitrus (Nepal)',
+      template
     };
+    data.caption = $('caption').value.trim() || `${numberToWord(mukhiNum)} FACE RUDRAKSHA (FRONT)`;
 
-    const jsonPath = `${CONFIG.certificatesFolder}/${productNo}.json`;
-    setStatus('info', '⬆️ Uploading JSON…');
-    await putFile(jsonPath, strToBase64(JSON.stringify(json, null, 2)),
-                  `Upload certificate data for ${productNo}`, token);
+    setProgress(10);
+    let frontBlob;
+    try { frontBlob = await removeBackground(frontFile, 'front'); }
+    catch (e) {
+      console.warn('Front BG failed:', e);
+      setStatus('⚠ Front BG removal failed — using compressed original.', 'err');
+      const bm = await createImageBitmap(frontFile);
+      frontBlob = await compressToTarget(bm, TARGET_BYTES);
+    }
+    const frontDataUrl = await blobToDataURL(frontBlob);
+    const frontBase64  = frontDataUrl.split(',')[1];
+    
+    $('photoPreview').src = frontDataUrl;
+    
+    setProgress(isXray ? 35 : 45);
 
-    // 🔗 SHORT LINK — productNo only, everything else comes from JSON
-    const previewUrl = `${CONFIG.siteBaseUrl}?productNo=${encodeURIComponent(productNo)}`;
+    let backBlob;
+    try { backBlob = await removeBackground(backFile, 'back'); }
+    catch (e) {
+      console.warn('Back BG failed:', e);
+      setStatus('⚠ Back BG removal failed — using compressed original.', 'err');
+      const bm = await createImageBitmap(backFile);
+      backBlob = await compressToTarget(bm, TARGET_BYTES);
+    }
+    const backBase64 = await blobToBase64(backBlob);
+    setProgress(isXray ? 60 : 75);
 
-    setStatus('ok',
-      `✅ Upload complete for ${productNo}\n\n` +
-      `📄 JSON: ${jsonPath}\n🖼 Front: ${frontPath}\n🖼 Back: ${backPath}\n\n` +
-      `🔗 Certificate link:\n<a href="${previewUrl}" target="_blank">${previewUrl}</a>`
-    );
+    let xrayBase64 = null, xrayPath = null;
+    if (isXray) {
+      setStatus('📖 Reading X-Ray image…', 'busy');
+      xrayBase64 = await blobToBase64(xrayFile);
+      const extMatch = xrayFile.name.match(/\.([a-z0-9]+)$/i);
+      const ext = (extMatch ? extMatch[1] : 'jpg').toLowerCase();
+      xrayPath = `${productNo}-xray.${ext}`;
+      data.hasXray = true;
+      data.xrayFile = xrayPath;
+      setProgress(70);
+    }
 
-    form.reset();
-    if (rememberChk.checked) tokenInput.value = localStorage.getItem(LS_KEY) || '';
+    const jsonText = JSON.stringify(data, null, 2);
+    const jsonBase64 = btoa(unescape(encodeURIComponent(jsonText)));
+
+    const folder = tpl.folder;
+    setStatus('⬆ Uploading front image…', 'busy');
+    await uploadFile(token, `${folder}/${productNo}/${productNo}-front.jpg`, frontBase64);
+    setProgress(isXray ? 76 : 82);
+
+    setStatus('⬆ Uploading back image…', 'busy');
+    await uploadFile(token, `${folder}/${productNo}/${productNo}-back.jpg`, backBase64);
+    setProgress(isXray ? 84 : 90);
+
+    if (isXray) {
+      setStatus('⬆ Uploading X-Ray image…', 'busy');
+      await uploadFile(token, `${folder}/${productNo}/${xrayPath}`, xrayBase64);
+      setProgress(90);
+    }
+
+    setStatus('⬆ Uploading JSON…', 'busy');
+    await uploadFile(token, `${folder}/${productNo}/${productNo}.json`, jsonBase64);
+    setProgress(95);
+
+    setStatus('🎨 Finalizing preview…', 'busy');
+    try {
+      await document.fonts.load('400 45px "TheSeasonsEmbedded"');
+      await document.fonts.load('400 18px "LucidityEmbedded"');
+      await document.fonts.ready;
+    } catch (e) {}
+    
+    setProgress(100);
+    downloadBtn.style.display = 'block';
+
+    const filesList = isXray
+      ? `  • ${productNo}-front.jpg (bg removed)\n  • ${productNo}-back.jpg (bg removed)\n  • ${xrayPath} (raw)\n  • ${productNo}.json`
+      : `  • ${productNo}-front.jpg (bg removed)\n  • ${productNo}-back.jpg (bg removed)\n  • ${productNo}.json`;
+
+    setStatus(`✅ Upload complete (${isXray ? 'X-Ray' : 'Magnification'}).\nFolder: ${folder}/${productNo}/\n\nFiles:\n${filesList}\n\nQR: ${tpl.certPage}`, 'ok');
+    setTimeout(() => setProgress(null), 1200);
   } catch (err) {
     console.error(err);
-    setStatus('err', `❌ Upload failed\n\n${err.message}`);
+    setStatus('❌ ' + err.message, 'err');
+    setProgress(null);
   } finally {
-    submitBtn.disabled = false;
+    uploadBtn.disabled = false;
   }
+});
+
+/* DOWNLOAD PNG */
+downloadBtn.addEventListener('click', async () => {
+  const originalText = downloadBtn.textContent;
+  downloadBtn.disabled = true;
+  downloadBtn.textContent = 'Generating PNG…';
+  const inner = $('certScaleInner');
+  const prevTransform = inner.style.transform;
+  try {
+    inner.style.transform = 'none';
+    await document.fonts.ready;
+    const canvas = await html2canvas($('certificate'), { width: CERT_W, height: CERT_H, scale: 2, useCORS: true, backgroundColor: '#FAF4E5', logging: false });
+    const productNo = $('productNo').value.trim().replace(/[^a-zA-Z0-9_-]/g, '_') || 'certificate';
+    const link = document.createElement('a');
+    link.download = `Rudraksha_Certificate_${productNo}.png`;
+    link.href = canvas.toDataURL('image/png');
+    link.click();
+  } catch (err) {
+    console.error(err);
+    alert('Could not generate PNG: ' + err.message);
+  } finally {
+    inner.style.transform = prevTransform;
+    downloadBtn.disabled = false;
+    downloadBtn.textContent = originalText;
+  }
+});
+
+/* INITIALIZATION */
+window.addEventListener('load', () => {
+  fitCertificate();
+  updateAutoFields();
+  updateLivePreview();
 });
 </script>
 </body>
