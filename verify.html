@@ -624,6 +624,7 @@
                               → read inline from URL (old long links)
        Field remaps: dimension→dimensions, genus→origin,
                      front/back auto-built if missing.
+       Observation in mode 1 is IGNORED (professional default is used).
        ═══════════════════════════════════════════════════════════ -->
   <script>
   (async function () {
@@ -674,7 +675,6 @@
       document.getElementById('back-label').innerHTML =
         `Back View &nbsp;<span>· Natural Lines ·</span>&nbsp; Unaltered`;
 
-      // Preserve HTML; convert literal newlines (from upload.html textarea) into <br>
       const obsHtml = String(observation).replace(/\r\n|\r|\n/g, '<br>');
       document.getElementById('obs-paragraph').innerHTML = obsHtml;
       document.getElementById('verdict-text').textContent = verdict;
@@ -691,9 +691,7 @@
     const prodQ   = (params.get('productNo') || '').trim();
     const certId  = certQ || prodQ;
 
-    /* ── 2. Legacy long-URL mode (old links with inline data) ──
-       If any inline data param is present, honour it — this keeps
-       every historical long-form link rendering exactly as before. */
+    /* ── 2. Legacy long-URL mode (old links with inline data) ── */
     const legacy = {
       productNo : prodQ || certId || '',
       mukhi      : params.get('mukhi'),
@@ -727,7 +725,9 @@
 
     const encId = encodeURIComponent(certId);
 
-    /* ── 3a. Primary: Rudraksha/{id}/{id}.json (upload.html layout) ── */
+    /* ── 3a. Primary: Rudraksha/{id}/{id}.json (upload.html layout) ──
+       NOTE: `raw.observation` is intentionally NOT forwarded — the
+       professional default observation in render() is always used. */
     try {
       const res = await fetch(`Rudraksha/${encId}/${encId}.json`, { cache: 'no-cache' });
       if (res.ok) {
@@ -740,9 +740,9 @@
             weight    : raw.weight,
             shape     : raw.shape,
             origin    : raw.genus || raw.origin,
-            observation: raw.observation,
             front     : raw.front || `Rudraksha/${certId}/${certId}-front.jpg`,
             back      : raw.back  || `Rudraksha/${certId}/${certId}-back.jpg`
+            /* observation: omitted on purpose */
           };
           return render(data);
         }
@@ -752,7 +752,9 @@
       console.warn('[verify] Rudraksha/{id}/{id}.json fetch failed:', err);
     }
 
-    /* ── 3b. Backward-compat: certificates/{id}.json (old short links) ── */
+    /* ── 3b. Backward-compat: certificates/{id}.json (old short links) ──
+       These may legitimately carry their own `observation`, so we
+       keep the existing behavior for this path. */
     try {
       const res = await fetch(`certificates/${encId}.json`, { cache: 'no-cache' });
       if (res.ok) {
