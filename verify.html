@@ -616,11 +616,14 @@
   </div><!-- /frame -->
 
   <!-- ═══════════════════════════════════════════════════════════
-       LOADER — dual mode:
-         • New short links  (?productNo=…) → fetch certificates/{id}.json
-         • Old long links   (?productNo=…&mukhi=…&front=…&back=…)
-                            → fall back to reading URL params
-       Both render through the same render() function.
+       LOADER — supports three modes (all backward compatible):
+         1. ?cert=ID          → Rudraksha/ID/ID.json    (new upload.html QR)
+         2. ?productNo=ID     → certificates/ID.json    (old short link)
+                              → Rudraksha/ID/ID.json   (also tried)
+         3. Long query string (?productNo=…&mukhi=…&front=…)
+                              → read inline from URL (old long links)
+       Field remaps: dimension→dimensions, genus→origin,
+                     front/back auto-built if missing.
        ═══════════════════════════════════════════════════════════ -->
   <script>
   (async function () {
@@ -636,7 +639,7 @@
       errorMsgEl.textContent  = msg;
     }
 
-    /* ── Shared renderer for both JSON and legacy params ── */
+    /* ── Shared renderer for all modes ── */
     function render(data) {
       const productNo  = data.productNo || '—';
       const mukhi      = data.mukhi != null && data.mukhi !== '' ? String(data.mukhi) : '';
@@ -671,7 +674,9 @@
       document.getElementById('back-label').innerHTML =
         `Back View &nbsp;<span>· Natural Lines ·</span>&nbsp; Unaltered`;
 
-      document.getElementById('obs-paragraph').innerHTML = observation;
+      // Preserve HTML; convert literal newlines (from upload.html textarea) into <br>
+      const obsHtml = String(observation).replace(/\r\n|\r|\n/g, '<br>');
+      document.getElementById('obs-paragraph').innerHTML = obsHtml;
       document.getElementById('verdict-text').textContent = verdict;
 
       document.title = `Certificate ${productNo} • Verified By Nepal Rudraksha Lab • AstroVagmi`;
@@ -680,20 +685,76 @@
       certEl.style.display    = 'block';
     }
 
-    /* ── 1. Read ?productNo= ── */
-    const params     = new URLSearchParams(window.location.search);
-    const productNoQ = (params.get('productNo') || '').trim();
+    /* ── 1. Parse identifiers from either ?cert= or ?productNo= ── */
+    const params  = new URLSearchParams(window.location.search);
+    const certQ   = (params.get('cert')      || '').trim();
+    const prodQ   = (params.get('productNo') || '').trim();
+    const certId  = certQ || prodQ;
 
-    if (!productNoQ) {
+    /* ── 2. Legacy long-URL mode (old links with inline data) ──
+       If any inline data param is present, honour it — this keeps
+       every historical long-form link rendering exactly as before. */
+    const legacy = {
+      productNo : prodQ || certId || '',
+      mukhi      : params.get('mukhi'),
+      dimensions : params.get('dimensions') || params.get('dimension'),
+      weight     : params.get('weight'),
+      shape      : params.get('shape'),
+      origin     : params.get('origin') || params.get('genus'),
+      front      : params.get('front'),
+      back       : params.get('back'),
+      observation: params.get('observation'),
+      caption    : params.get('caption')
+    };
+
+    const hasLegacy = ['mukhi','dimensions','weight','shape','origin','front','back','observation']
+      .some(k => legacy[k] != null && legacy[k] !== '');
+
+    if (hasLegacy) {
+      if (legacy.dimensions) legacy.dimensions = legacy.dimensions.replace(/\+/g, ' ');
+      if (legacy.weight)     legacy.weight     = legacy.weight.replace(/\+/g, ' ');
+      if (legacy.origin)     legacy.origin     = legacy.origin.replace(/\+/g, ' ');
+      return render(legacy);
+    }
+
+    /* ── 3. Short-link mode — needs an identifier ── */
+    if (!certId) {
       return showError('No certificate number was provided. Please open the full link that contains ?productNo=YOUR-CERTIFICATE-ID.');
     }
-    if (!/^[A-Za-z0-9._-]+$/.test(productNoQ)) {
+    if (!/^[A-Za-z0-9._-]+$/.test(certId)) {
       return showError('The certificate number format is invalid.');
     }
 
-    /* ── 2. Try the JSON first (new short-link mode) ── */
+    const encId = encodeURIComponent(certId);
+
+    /* ── 3a. Primary: Rudraksha/{id}/{id}.json (upload.html layout) ── */
     try {
-      const res = await fetch(`certificates/${encodeURIComponent(productNoQ)}.json`, { cache: 'no-cache' });
+      const res = await fetch(`Rudraksha/${encId}/${encId}.json`, { cache: 'no-cache' });
+      if (res.ok) {
+        const raw = await res.json();
+        if (raw && typeof raw === 'object') {
+          const data = {
+            productNo : raw.productNo || certId,
+            mukhi     : raw.mukhi,
+            dimensions: raw.dimension || raw.dimensions,
+            weight    : raw.weight,
+            shape     : raw.shape,
+            origin    : raw.genus || raw.origin,
+            observation: raw.observation,
+            front     : raw.front || `Rudraksha/${certId}/${certId}-front.jpg`,
+            back      : raw.back  || `Rudraksha/${certId}/${certId}-back.jpg`
+          };
+          return render(data);
+        }
+        return showError('The certificate data appears to be malformed.');
+      }
+    } catch (err) {
+      console.warn('[verify] Rudraksha/{id}/{id}.json fetch failed:', err);
+    }
+
+    /* ── 3b. Backward-compat: certificates/{id}.json (old short links) ── */
+    try {
+      const res = await fetch(`certificates/${encId}.json`, { cache: 'no-cache' });
       if (res.ok) {
         const data = await res.json();
         if (data && typeof data === 'object') {
@@ -701,36 +762,12 @@
         }
         return showError('The certificate data appears to be malformed.');
       }
-      // 404 → fall through to legacy URL mode
     } catch (err) {
-      console.warn('[verify] JSON fetch failed, trying legacy URL mode:', err);
-    }
-
-    /* ── 3. Legacy fallback (old long URLs) ── */
-    const legacy = {
-      productNo : productNoQ,
-      mukhi      : params.get('mukhi'),
-      dimensions : params.get('dimensions'),
-      weight     : params.get('weight'),
-      shape      : params.get('shape'),
-      origin     : params.get('origin'),
-      front      : params.get('front'),
-      back       : params.get('back')
-    };
-
-    const hasLegacy = ['mukhi','dimensions','weight','shape','origin','front','back']
-      .some(k => legacy[k] != null && legacy[k] !== '');
-
-    if (hasLegacy) {
-      // Decode '+' back to spaces in dimensions/weight (common in old links)
-      if (legacy.dimensions) legacy.dimensions = legacy.dimensions.replace(/\+/g, ' ');
-      if (legacy.weight)     legacy.weight     = legacy.weight.replace(/\+/g, ' ');
-      if (legacy.origin)     legacy.origin     = legacy.origin.replace(/\+/g, ' ');
-      return render(legacy);
+      console.warn('[verify] certificates/{id}.json fetch failed:', err);
     }
 
     /* ── 4. Nothing worked → error ── */
-    return showError(`Certificate "${productNoQ}" could not be found in our records. Please double-check the link or contact support.`);
+    return showError(`Certificate "${certId}" could not be found in our records. Please double-check the link or contact support.`);
   })();
   </script>
 </body>
